@@ -22,6 +22,8 @@ const SORT_LABELS: Record<SortMode, string> = {
   random: "Random", az: "A–Z", largest: "Largest first", smallest: "Smallest first", region: "By region",
 };
 
+/** Pieces smaller than this on screen get a ring drawn round them, of this radius. */
+export const TINY_PX = 20, RING_PX = 18;
 const GOLD = "#e0c97f", MUTED = "#6a80a0", PANEL = "#16213e", EDGE = "rgba(224,201,127,0.25)";
 
 function load<T>(key: string, fallback: T): T {
@@ -323,6 +325,11 @@ export default function PieceDeck({ mapKey, noun, items, placed, scale, layout, 
         }} viewBox={`${dragging.bbox.minX} ${dragging.bbox.minY} ${Math.max(dragging.bbox.w, 1)} ${Math.max(dragging.bbox.h, 1)}`}>
           <path d={dragging.path} fill={dragging.colour} stroke="white" strokeWidth={1.5}
             vectorEffect="non-scaling-stroke" fillRule="evenodd" opacity={0.9} />
+          {/* Tiny pieces (e.g. DC) get a ring so you can see what you're carrying */}
+          {Math.max(dragging.bbox.w, dragging.bbox.h) * scale < TINY_PX && (
+            <circle cx={dragging.bbox.cx} cy={dragging.bbox.cy} r={RING_PX / scale}
+              fill="rgba(224,201,127,0.18)" stroke={GOLD} strokeWidth={2} vectorEffect="non-scaling-stroke" />
+          )}
         </svg>
       )}
 

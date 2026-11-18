@@ -15,7 +15,7 @@ import { US_STATES, SVG_HEIGHT, SVG_WIDTH } from "@/lib/usStatesData";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
 import { pathArea } from "@/lib/touch";
-import PieceDeck, { type DeckItem } from "@/components/PieceDeck";
+import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -768,6 +768,10 @@ export default function USA() {
               {states.map(s => (
                 <path key={s.id} d={s.path} fill="none"
                   stroke="#3a5070" strokeWidth="0.7" strokeDasharray="3,3" fillRule="evenodd" />
+              ))}
+              {deckOn && states.filter(s => !deckPlaced.has(s.id) && Math.max(bboxes[s.id].w, bboxes[s.id].h) * view.scale < TINY_PX).map(s => (
+                <circle key={"ring-" + s.id} cx={bboxes[s.id].cx} cy={bboxes[s.id].cy} r={RING_PX / view.scale}
+                  fill="none" stroke="rgba(224,201,127,0.55)" strokeWidth={1.2} strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
               ))}
             </g>
           </svg>

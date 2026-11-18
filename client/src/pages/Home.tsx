@@ -15,7 +15,7 @@ import { AREA_STATS } from "@/lib/areaStats";
 import { COUNTIES as RAW_AREAS, SVG_HEIGHT, SVG_WIDTH } from "@/lib/countiesData";
 import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
 import { pathArea } from "@/lib/touch";
-import PieceDeck, { type DeckItem } from "@/components/PieceDeck";
+import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -769,6 +769,10 @@ export default function Home() {
               {areas.map(a => (
                 <path key={a.id} d={a.path} fill="none"
                   stroke="#3a5070" strokeWidth="0.7" strokeDasharray="3,3" fillRule="evenodd" />
+              ))}
+              {deckOn && areas.filter(a => !deckPlaced.has(a.id) && Math.max(bboxes[a.id].w, bboxes[a.id].h) * view.scale < TINY_PX).map(a => (
+                <circle key={"ring-" + a.id} cx={bboxes[a.id].cx} cy={bboxes[a.id].cy} r={RING_PX / view.scale}
+                  fill="none" stroke="rgba(224,201,127,0.55)" strokeWidth={1.2} strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
               ))}
             </g>
           </svg>
