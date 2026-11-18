@@ -700,7 +700,7 @@ export default function USA() {
         {/* Ghost reference */}
         {showGhost && (
           <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
-            <g transform={`translate(${ghostOff.tx},${ghostOff.ty}) scale(${view.scale})`}>
+            <g transform={`translate(${view.x},${view.y}) scale(${view.scale})`}>
               {states.map(s => (
                 <path key={s.id} d={s.path} fill="none"
                   stroke="#3a5070" strokeWidth="0.7" strokeDasharray="3,3" fillRule="evenodd" />
@@ -712,7 +712,7 @@ export default function USA() {
         {/* Dot map — centroid targets only */}
         {showDotMap && (
           <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
-            <g transform={`translate(${ghostOff.tx},${ghostOff.ty}) scale(${view.scale})`}>
+            <g transform={`translate(${view.x},${view.y}) scale(${view.scale})`}>
               {states.map(s => {
                 const placed = quiz.active && quiz.placed.has(s.id);
                 return (
@@ -781,7 +781,7 @@ export default function USA() {
                   const fontSize = fullNames
                     ? (words.length > 2 ? baseFontSize * 0.72 : words.length > 1 ? baseFontSize * 0.82 : baseFontSize)
                     : baseFontSize;
-                  const strokeW = Math.max(2, fontSize * 0.28);
+                  const strokeW = Math.max(0.9, fontSize * 0.14);
 
                   if (fullNames && words.length > 1) {
                     const mid = Math.ceil(words.length / 2);
@@ -791,9 +791,9 @@ export default function USA() {
                     return (
                       <text x={s.cx} y={s.cy - lineH * 0.5}
                         textAnchor="middle"
-                        fontSize={fontSize} fontFamily="'Playfair Display', Georgia, serif"
-                        fontWeight="700"
-                        fill="white" stroke="rgba(0,0,0,0.75)" strokeWidth={strokeW} paintOrder="stroke"
+                        fontSize={fontSize} fontFamily="Inter, system-ui, sans-serif"
+                        fontWeight="600"
+                        fill="white" stroke="rgba(0,0,0,0.6)" strokeWidth={strokeW} strokeLinejoin="round" paintOrder="stroke"
                         style={{ pointerEvents: "none", userSelect: "none" }}>
                         <tspan x={s.cx} dy="0">{line1}</tspan>
                         <tspan x={s.cx} dy={lineH}>{line2}</tspan>
@@ -803,9 +803,9 @@ export default function USA() {
                   return (
                     <text x={s.cx} y={s.cy}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize={fontSize} fontFamily="'Playfair Display', Georgia, serif"
-                      fontWeight="700"
-                      fill="white" stroke="rgba(0,0,0,0.75)" strokeWidth={strokeW} paintOrder="stroke"
+                      fontSize={fontSize} fontFamily="Inter, system-ui, sans-serif"
+                      fontWeight="600"
+                      fill="white" stroke="rgba(0,0,0,0.6)" strokeWidth={strokeW} strokeLinejoin="round" paintOrder="stroke"
                       style={{ pointerEvents: "none", userSelect: "none" }}>
                       {label}
                     </text>

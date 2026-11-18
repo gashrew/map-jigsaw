@@ -701,7 +701,7 @@ export default function Home() {
         {/* Ghost reference */}
         {showGhost && (
           <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
-            <g transform={`translate(${ghostOff.tx},${ghostOff.ty}) scale(${view.scale})`}>
+            <g transform={`translate(${view.x},${view.y}) scale(${view.scale})`}>
               {areas.map(a => (
                 <path key={a.id} d={a.path} fill="none"
                   stroke="#3a5070" strokeWidth="0.7" strokeDasharray="3,3" fillRule="evenodd" />
@@ -749,8 +749,8 @@ export default function Home() {
                 {showLabels && (
                   <text x={a.cx} y={a.cy}
                     textAnchor="middle" dominantBaseline="middle"
-                    fontSize="7.5" fontFamily="Georgia, serif"
-                    fill="white" stroke="#00000099" strokeWidth="2" paintOrder="stroke"
+                    fontSize="7.5" fontFamily="Inter, system-ui, sans-serif" fontWeight="600"
+                    fill="white" stroke="rgba(0,0,0,0.6)" strokeWidth="1.05" strokeLinejoin="round" paintOrder="stroke"
                     style={{ pointerEvents: "none", userSelect: "none" }}>
                     {a.name}
                   </text>
