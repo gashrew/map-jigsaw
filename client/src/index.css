@@ -1,0 +1,85 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+/* Dark Atlas theme — deep navy + cartographic gold */
+:root {
+  --radius: 0.35rem;
+  --background: oklch(0.13 0.03 240);
+  --foreground: oklch(0.88 0.02 80);
+  --card: oklch(0.17 0.03 240);
+  --card-foreground: oklch(0.88 0.02 80);
+  --popover: oklch(0.17 0.03 240);
+  --popover-foreground: oklch(0.88 0.02 80);
+  --primary: oklch(0.82 0.12 85);
+  --primary-foreground: oklch(0.13 0.03 240);
+  --secondary: oklch(0.22 0.03 240);
+  --secondary-foreground: oklch(0.75 0.02 80);
+  --muted: oklch(0.20 0.025 240);
+  --muted-foreground: oklch(0.55 0.02 240);
+  --accent: oklch(0.82 0.12 85);
+  --accent-foreground: oklch(0.13 0.03 240);
+  --destructive: oklch(0.65 0.22 25);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.82 0.12 85);
+
+  /* Custom atlas vars */
+  --gold: #e0c97f;
+  --navy: #0f1b2d;
+  --surface: #16213e;
+  --ghost-stroke: #3a5070;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+}
