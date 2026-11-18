@@ -56,3 +56,16 @@ export function pinchView(
   const k = scale / start.view.scale;
   return { scale, x: now.mx - (start.mx - start.view.x) * k, y: now.my - (start.my - start.view.y) * k };
 }
+
+/** Area enclosed by an SVG path of M/L/Z rings (map units squared). */
+export function pathArea(d: string): number {
+  let total = 0;
+  for (const ring of d.split("Z")) {
+    const n = ring.match(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi)?.map(Number) ?? [];
+    let a = 0;
+    for (let i = 0; i + 3 < n.length; i += 2) a += n[i] * n[i + 3] - n[i + 2] * n[i + 1];
+    if (n.length >= 6) a += n[n.length - 2] * n[1] - n[0] * n[n.length - 1];
+    total += Math.abs(a) / 2;
+  }
+  return total;
+}

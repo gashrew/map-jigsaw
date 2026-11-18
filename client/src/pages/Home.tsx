@@ -14,6 +14,8 @@ import { AREA_INFO } from "@/lib/areaInfo";
 import { AREA_STATS } from "@/lib/areaStats";
 import { COUNTIES as RAW_AREAS, SVG_HEIGHT, SVG_WIDTH } from "@/lib/countiesData";
 import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
+import { pathArea } from "@/lib/touch";
+import PieceDeck, { type DeckItem } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -239,6 +241,22 @@ export default function Home() {
   const [zOrder,     setZOrder]     = useState<string[]>(() => bySizeDescending(areas));
   const bboxes = useMemo(() => Object.fromEntries(areas.map(a => [a.id, pathBBox(a.path)])), [areas]);
 
+  // "One at a time" quiz: pieces wait in a box beside the map and are dragged on
+  const [deckOn, setDeckOn] = useState(false);
+  const [deckPlaced, setDeckPlaced] = useState<Set<string>>(new Set());
+  const [deckRun, setDeckRun] = useState(0);
+  const [portrait, setPortrait] = useState(() => typeof window !== "undefined" && window.innerWidth < window.innerHeight);
+  useEffect(() => {
+    const f = () => setPortrait(window.innerWidth < window.innerHeight);
+    window.addEventListener("resize", f);
+    return () => window.removeEventListener("resize", f);
+  }, []);
+  const deckItems = useMemo<DeckItem[]>(() => areas.map(a => ({
+    id: a.id, name: a.name, path: a.path, colour: a.colour, bbox: bboxes[a.id],
+    area: pathArea(a.path), region: AREA_INFO[a.name]?.region,
+  })), [areas, bboxes]);
+  const deckLabelsBefore = useRef(true);
+
   // Quiz
   const [quiz, setQuiz] = useState<QuizState>({
     active: false, placed: new Set(), wrong: new Set(), startTime: 0, endTime: null,
@@ -406,6 +424,47 @@ export default function Home() {
     setShowResults(true);
   }
 
+  function startDeck() {
+    deckLabelsBefore.current = showLabels;
+    setShowLabels(false);
+    setShowGhost(true);
+    setSelectedId(null);
+    setDeckPlaced(new Set());
+    setDeckRun(r => r + 1);
+    setDeckOn(true);
+  }
+  function restartDeck() {
+    areas.forEach(p => { pieceStates.current[p.id] = { tx: 0, ty: 0 }; });
+    setDeckPlaced(new Set());
+    setDeckRun(r => r + 1);
+  }
+  function exitDeck() {
+    setDeckOn(false);
+    setShowLabels(deckLabelsBefore.current);
+    assemble();
+  }
+  // A piece dropped from the box: its box's top-left is at (left, top) on screen
+  function deckDrop(id: string, left: number, top: number): boolean {
+    const el = canvasRef.current;
+    if (!el) return false;
+    const r = el.getBoundingClientRect(), v = viewRef.current, b = bboxes[id];
+    const tx = (left - r.left - v.x) / v.scale - b.minX;
+    const ty = (top - r.top - v.y) / v.scale - b.minY;
+    // Close enough: within a fixed distance on screen, a little more for bigger pieces
+    const tol = Math.max(22 / v.scale, Math.min(30, Math.max(b.w, b.h) * 0.15));
+    if (Math.hypot(tx, ty) > tol) return false;
+    pieceStates.current[id] = { tx: 0, ty: 0 };
+    applyTransform(id);
+    setDeckPlaced(prev => new Set(prev).add(id));
+    setZOrder(prev => [...prev.filter(x => x !== id), id]);
+    return true;
+  }
+  // Opening or closing the box (or rotating) changes the map's space: refit it
+  useEffect(() => {
+    const t = setTimeout(() => { resetView(); applyAllTransforms(); }, 30);
+    return () => clearTimeout(t);
+  }, [deckOn, portrait]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function exitQuiz() {
     if (quizTimerRef.current) { clearInterval(quizTimerRef.current); quizTimerRef.current = null; }
     setQuiz({ active: false, placed: new Set(), wrong: new Set(), startTime: 0, endTime: null });
@@ -442,6 +501,7 @@ export default function Home() {
 
   // ── Drag pieces ─────────────────────────────────────────────────────────────
   function startDrag(e: React.MouseEvent | React.TouchEvent, id: string) {
+    if (deckOn) return; // in the one-at-a-time quiz, placed pieces stay put and the map pans
     e.preventDefault();
     e.stopPropagation();
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
@@ -657,7 +717,9 @@ export default function Home() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
-          {!quiz.active ? (
+          {deckOn ? (
+            <div style={{ fontSize: "0.85rem", color: "#e0c97f", fontFamily: "Inter, sans-serif", display: window.innerWidth < 600 ? "none" : undefined }}>One at a time — drag each piece from the box onto the map</div>
+          ) : !quiz.active ? (
             <>
               <ToggleLabel label="Ghost map"    checked={showGhost}     onChange={setShowGhost} />
               <ToggleLabel label="Labels"       checked={showLabels}    onChange={setShowLabels} />
@@ -671,6 +733,7 @@ export default function Home() {
               <ToggleLabel label="Snap" checked={snapEnabled} onChange={setSnapEnabled} />
               <Divider />
               <CtaButton onClick={startQuiz}>Quiz mode</CtaButton>
+              <CtaButton onClick={startDeck}>One at a time</CtaButton>
             </>
           ) : (
             <>
@@ -691,10 +754,11 @@ export default function Home() {
         </div>
       </header>
 
+      <div style={{ flex: 1, display: "flex", flexDirection: deckOn && portrait ? "column" : "row", minHeight: 0 }}>
       {/* ── Canvas ── */}
       <div
         ref={canvasRef}
-        style={{ flex: 1, position: "relative", overflow: "hidden", cursor: dragging.current ? "grabbing" : "default" }}
+        style={{ flex: 1, minWidth: 0, minHeight: 0, position: "relative", overflow: "hidden", cursor: dragging.current ? "grabbing" : "default" }}
         onMouseDown={startPan}
         onTouchStart={startPanTouch}
       >
@@ -722,7 +786,7 @@ export default function Home() {
                 key={a.id}
                 ref={el => { pieceRefs.current[a.id] = el; }}
                 data-piece={a.id}
-                style={{ cursor: "grab" }}
+                style={{ cursor: deckOn ? "default" : "grab", display: deckOn && !deckPlaced.has(a.id) ? "none" : undefined }}
                 onMouseDown={e => startDrag(e, a.id)}
                 onTouchStart={e => startDrag(e, a.id)}
                 onDoubleClick={() => setZOrder(prev => [...prev.filter(x => x !== a.id), a.id])}
@@ -855,8 +919,14 @@ export default function Home() {
           color: "#3a5070", fontSize: "0.7rem",
           pointerEvents: "none", whiteSpace: "nowrap",
         }}>
-          {isTouch ? <>Drag pieces with a finger &bull; Drag the background to move the map &bull; Pinch to zoom &bull; Tap a piece for details</> : <>Scroll to zoom &bull; Drag canvas to pan &bull; Click a piece for details &bull; Double-click to bring to front</>}
+          {deckOn ? <>Drag the piece from the box onto its outline &bull; {isTouch ? "Drag the background to move the map • Pinch to zoom" : "Drag the background to move the map • Scroll to zoom • Arrow keys change piece"}</> : isTouch ? <>Drag pieces with a finger &bull; Drag the background to move the map &bull; Pinch to zoom &bull; Tap a piece for details</> : <>Scroll to zoom &bull; Drag canvas to pan &bull; Click a piece for details &bull; Double-click to bring to front</>}
         </div>
+      </div>
+      {deckOn && (
+        <PieceDeck key={deckRun} mapKey="england" noun="area" items={deckItems} placed={deckPlaced}
+          scale={view.scale} layout={portrait ? "bottom" : "side"}
+          onDrop={deckDrop} onRestart={restartDeck} onExit={exitDeck} />
+      )}
       </div>
 
       <style>{`
