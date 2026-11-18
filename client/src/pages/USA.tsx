@@ -12,7 +12,9 @@
  */
 
 import { US_STATES, SVG_HEIGHT, SVG_WIDTH } from "@/lib/usStatesData";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
+const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface PieceState { tx: number; ty: number; ps?: number; } // ps = per-piece scale (default 1)
@@ -189,13 +191,15 @@ export default function USA() {
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedId,   setSelectedId]   = useState<string | null>(null);
   const [tooltip,      setTooltip]      = useState<{ name: string; x: number; y: number } | null>(null);
-  const [zOrder,       setZOrder]       = useState<string[]>(() => states.map(s => s.id));
+  const [zOrder,       setZOrder]       = useState<string[]>(() => bySizeDescending(states));
+  const bboxes = useMemo(() => Object.fromEntries(states.map(s => [s.id, pathBBox(s.path)])), [states]);
   const [view,         setView]         = useState<ViewState>({ x: 0, y: 0, scale: 1 });
   const [ghostOff,     setGhostOff]     = useState({ tx: 0, ty: 0 });
   const [quiz, setQuiz] = useState<QuizState>({ active: false, placed: new Set(), startTime: 0, endTime: null });
   const [showResults,  setShowResults]  = useState(false);
   const [quizElapsed,  setQuizElapsed]  = useState(0);
-  const [scatterCols,  setScatterCols]  = useState<{ leftCols: number; rightCols: number; thumbW: number; colGap: number; outerPad: number } | null>(null);
+  const [trays, setTrays] = useState<{ left: number; top: number; width: number; height: number }[] | null>(null);
+  const trayView = useRef<ViewState | null>(null);
 
   const viewRef      = useRef<ViewState>({ x: 0, y: 0, scale: 1 });
   const canvasRef    = useRef<HTMLDivElement>(null);
@@ -204,7 +208,7 @@ export default function USA() {
   const dragging     = useRef<{ id: string; ox: number; oy: number } | null>(null);
   const panning      = useRef<{ ox: number; oy: number; vx: number; vy: number } | null>(null);
   const snapTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pinchRef     = useRef<{ dist: number; scale: number } | null>(null);
+  const pinchRef     = useRef<{ dist: number; mx: number; my: number; view: TouchView } | null>(null);
   const quizTimerRef     = useRef<ReturnType<typeof setInterval> | null>(null);
   const scatterPositions = useRef<Record<string, PieceState>>({});
 
@@ -225,14 +229,15 @@ export default function USA() {
     if (!el) return { tx: 0, ty: 0 };
     const { width: w, height: h } = el.getBoundingClientRect();
     const v = viewRef.current;
-    const worldTx = (w - svgW) / 2;
-    const worldTy = (h - svgH) / 2;
-    return { tx: worldTx * v.scale + v.x, ty: worldTy * v.scale + v.y };
+    void w; void h;
+    return { tx: v.x, ty: v.y };
   }, [svgW, svgH]);
 
   useEffect(() => {
-    const update = () => setGhostOff(ghostScreenOffset());
-    update();
+    setGhostOff(ghostScreenOffset());
+    // Rotating an iPad or resizing the window refits the map; pieces keep their places
+    let t: ReturnType<typeof setTimeout> | undefined;
+    const update = () => { clearTimeout(t); t = setTimeout(() => resetView(), 150); };
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, [ghostScreenOffset]);
@@ -241,9 +246,10 @@ export default function USA() {
     const el = canvasRef.current;
     if (!el) return;
     const { width: w, height: h } = el.getBoundingClientRect();
-    const initX = (w - svgW) / 2;
-    const initY = (h - svgH) / 2;
-    const initView = { x: 0, y: 0, scale: 1 };
+    // The assembled map lives at world (0,0); the view fits it to the screen
+    const initX = 0;
+    const initY = 0;
+    const initView = fitView(w, h, svgW, svgH);
     viewRef.current = initView;
     setView(initView);
     states.forEach(s => { pieceStates.current[s.id] = { tx: initX, ty: initY }; });
@@ -290,91 +296,86 @@ export default function USA() {
   function scatter() {
     const el = canvasRef.current;
     if (!el) return;
-    const { width: w, height: h } = el.getBoundingClientRect();
-    const v = viewRef.current;
-
-    // Target thumbnail height on screen: ~100px so shapes are clearly visible.
-    // ps = thumbH / svgH  =>  ps = 100 / 600 = 0.167
-    const ps = 0.22;          // gives ~132px tall thumbnails on screen
-    const thumbW = svgW * ps; // ~211px
-    const thumbH = svgH * ps; // ~132px
-    const rowGap = 6;         // px vertical gap between rows
-    const colGap = 4;         // px horizontal gap between columns on same side
-    const outerPad = 4;       // px from canvas edge
-
-    // How many rows fit on one column on each side?
-    const maxRows = Math.floor((h - outerPad * 2 + rowGap) / (thumbH + rowGap));
-
-    // Shuffle and split into left/right halves
+    const { width: w, height: fullH } = el.getBoundingClientRect();
+    const h = fullH - 46; // keep clear of the hint bar along the bottom
+    const n = states.length;
+    const pad = 6, gap = 6, aspect = 1.25;
     const shuffled = [...states].sort(() => Math.random() - 0.5);
-    const half = Math.ceil(shuffled.length / 2);
-    const leftItems  = shuffled.slice(0, half);
-    const rightItems = shuffled.slice(half);
-
-    // Distribute items into sub-columns (max 2 per side)
-    const splitIntoColumns = (items: typeof states) => {
-      if (items.length <= maxRows) {
-        return [items];  // single column fits
+    // Each piece is shown filling its own cell in a tray (never larger than real
+    // size) and grows to its true size when picked up. Trays go beside the map on
+    // wide screens and above/below it on tall ones; the map shrinks to fit between.
+    const cells: { x: number; y: number }[] = [];
+    let ch: number, cw: number, mid: { x: number; y: number; w: number; h: number };
+    const trayRects: { left: number; top: number; width: number; height: number }[] = [];
+    if (w / h >= (svgW / svgH) * 1.15) {
+      const perSide = Math.ceil(n / 2);
+      let k = 1; ch = Math.min(132, (h - pad * 2 + gap) / perSide - gap);
+      if (ch < 60) { k = 2; ch = Math.min(132, (h - pad * 2 + gap) / Math.ceil(perSide / k) - gap); }
+      ch = Math.min(ch, (w * 0.5 / (2 * k) - gap) / aspect);
+      cw = ch * aspect;
+      const rows = Math.ceil(perSide / k), sideW = k * (cw + gap);
+      for (let side = 0; side < 2; side++) {
+        const count = side === 0 ? perSide : n - perSide;
+        const x0 = side === 0 ? pad : w - pad - sideW + gap;
+        const totalH = Math.min(rows, count) * (ch + gap) - gap;
+        const y0 = Math.max(pad, (h - totalH) / 2);
+        for (let i = 0; i < count; i++) {
+          cells.push({ x: x0 + Math.floor(i / rows) * (cw + gap) + cw / 2, y: y0 + (i % rows) * (ch + gap) + ch / 2 });
+        }
+        trayRects.push({ left: x0 - 3, top: pad - 3, width: sideW - gap + 6, height: h - pad * 2 + 6 });
       }
-      const col1Count = Math.ceil(items.length / 2);
-      return [items.slice(0, col1Count), items.slice(col1Count)];
-    };
-
-    const leftCols  = splitIntoColumns(leftItems);
-    const rightCols = splitIntoColumns(rightItems);
-
-    // pieceTransform centroid: screenX = (tx + cx*ps) * v.scale + v.x
-    // => tx = (targetCX - v.x) / v.scale - cx * ps
-    const place = (s: typeof states[0], targetCX: number, targetCY: number) => {
-      const tx = (targetCX - v.x) / v.scale - s.cx * ps;
-      const ty = (targetCY - v.y) / v.scale - s.cy * ps;
+      mid = { x: pad + sideW, y: 0, w: w - 2 * (pad + sideW), h };
+    } else {
+      ch = 80;
+      let perRow = 1, rows = n;
+      for (;;) {
+        cw = ch * aspect;
+        perRow = Math.max(1, Math.floor((w - pad * 2 + gap) / (cw + gap)));
+        rows = Math.ceil(n / perRow);
+        if (rows * (ch + gap) <= h * 0.5 || ch < 24) break;
+        ch *= 0.92;
+      }
+      const topRows = Math.ceil(rows / 2), bottomRows = rows - topRows;
+      const rowW = perRow * (cw + gap) - gap, x0 = (w - rowW) / 2;
+      const topH = topRows * (ch + gap), bottomH = bottomRows * (ch + gap);
+      for (let i = 0; i < n; i++) {
+        const r = Math.floor(i / perRow), c = i % perRow;
+        const y = r < topRows ? pad + r * (ch + gap) : h - pad - bottomH + (r - topRows) * (ch + gap);
+        cells.push({ x: x0 + c * (cw + gap) + cw / 2, y: y + ch / 2 });
+      }
+      trayRects.push({ left: x0 - 3, top: pad - 3, width: rowW + 6, height: topH - gap + 6 });
+      if (bottomRows) trayRects.push({ left: x0 - 3, top: h - pad - bottomH - 3, width: rowW + 6, height: bottomH - gap + 6 });
+      mid = { x: 0, y: pad + topH, w, h: h - topH - bottomH - pad * 2 };
+    }
+    // Fit the map into the space left between the trays
+    const f = fitView(mid.w, Math.max(80, mid.h), svgW, svgH, 10);
+    const v = { scale: f.scale, x: f.x + mid.x, y: f.y + mid.y };
+    viewRef.current = v;
+    setView(v);
+    setGhostOff(ghostScreenOffset());
+    // screenX of a map point px = (tx + px*ps) * v.scale + v.x; centre each piece's box in its cell
+    shuffled.forEach((s, i) => {
+      const c = cells[i], b = bboxes[s.id];
+      const ps = Math.min(1, 0.85 * Math.min(cw / (Math.max(b.w, 1) * v.scale), ch / (Math.max(b.h, 1) * v.scale)));
+      const tx = (c.x - v.x) / v.scale - b.cx * ps;
+      const ty = (c.y - v.y) / v.scale - b.cy * ps;
       scatterPositions.current[s.id] = { tx, ty, ps };
-      return { tx, ty };
-    };
-
-    // Place left side columns (grow rightward from left edge)
-    let globalIdx = 0;
-    leftCols.forEach((col, ci) => {
-      const colCX = outerPad + thumbW / 2 + ci * (thumbW + colGap);
-      const totalH = col.length * (thumbH + rowGap) - rowGap;
-      const startY = Math.max(outerPad, (h - totalH) / 2);
-      col.forEach((s, ri) => {
-        const targetCY = startY + ri * (thumbH + rowGap) + thumbH / 2;
-        const { tx, ty } = place(s, colCX, targetCY);
-        animatePiece(s.id, tx, ty, globalIdx * 10, ps);
-        globalIdx++;
-      });
+      animatePiece(s.id, tx, ty, i * 10, ps);
     });
-
-    // Place right side columns (grow leftward from right edge)
-    rightCols.forEach((col, ci) => {
-      const colCX = w - outerPad - thumbW / 2 - ci * (thumbW + colGap);
-      const totalH = col.length * (thumbH + rowGap) - rowGap;
-      const startY = Math.max(outerPad, (h - totalH) / 2);
-      col.forEach((s, ri) => {
-        const targetCY = startY + ri * (thumbH + rowGap) + thumbH / 2;
-        const { tx, ty } = place(s, colCX, targetCY);
-        animatePiece(s.id, tx, ty, globalIdx * 10, ps);
-        globalIdx++;
-      });
-    });
-
-    // Store column layout for divider rendering
-    setScatterCols({ leftCols: leftCols.length, rightCols: rightCols.length, thumbW, colGap, outerPad });
+    trayView.current = v;
+    setTrays(trayRects);
   }
 
   function assemble() {
     const el = canvasRef.current;
     if (!el) return;
-    const { width: w, height: h } = el.getBoundingClientRect();
-    const tx = (w - svgW) / 2;
-    const ty = (h - svgH) / 2;
-    states.forEach((s, i) => animatePiece(s.id, tx, ty, i * 10));
-    setScatterCols(null);
+    states.forEach((s, i) => animatePiece(s.id, 0, 0, i * 10));
+    setTrays(null);
   }
 
   function resetView() {
-    const newView = { x: 0, y: 0, scale: 1 };
+    const r = canvasRef.current?.getBoundingClientRect();
+    const newView = r ? fitView(r.width, r.height, svgW, svgH) : { x: 0, y: 0, scale: 1 };
     viewRef.current = newView;
     setView(newView);
     requestAnimationFrame(() => applyAllTransforms());
@@ -431,8 +432,16 @@ export default function USA() {
     panning.current = { ox: e.clientX, oy: e.clientY, vx: viewRef.current.x, vy: viewRef.current.y };
   }
 
+  // One finger on the map background moves the map
+  function startPanTouch(e: React.TouchEvent) {
+    if (dragging.current || e.touches.length !== 1) return;
+    panning.current = { ox: e.touches[0].clientX, oy: e.touches[0].clientY, vx: viewRef.current.x, vy: viewRef.current.y };
+  }
+
   useEffect(() => {
     function onMove(e: MouseEvent | TouchEvent) {
+      if ("touches" in e && e.touches.length !== 1) return;
+      if ("touches" in e && (dragging.current || panning.current)) e.preventDefault();
       const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
       const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
 
@@ -467,9 +476,8 @@ export default function USA() {
         if (snapEnabled) {
           const el2 = canvasRef.current;
           if (el2) {
-            const { width: w, height: h } = el2.getBoundingClientRect();
-            const homeTx = (w - svgW) / 2;
-            const homeTy = (h - svgH) / 2;
+            const homeTx = 0;
+            const homeTy = 0;
             const s = pieceStates.current[id];
             const dist = Math.hypot(s.tx - homeTx, s.ty - homeTy);
             if (dist < 45) {
@@ -499,7 +507,7 @@ export default function USA() {
                 // Return to the position it was scattered to
                 const origin = scatterPositions.current[id];
                 if (origin) {
-                  animatePiece(id, origin.tx, origin.ty);
+                  animatePiece(id, origin.tx, origin.ty, 0, origin.ps ?? 1);
                 }
               }, 420);
             }
@@ -528,40 +536,51 @@ export default function USA() {
       requestAnimationFrame(() => applyAllTransforms());
     }
 
-    function onTouchMove(e: TouchEvent) {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const dist = Math.hypot(dx, dy);
-        if (pinchRef.current) {
-          const ratio = dist / pinchRef.current.dist;
-          const v = viewRef.current;
-          const newScale = Math.min(5, Math.max(0.3, pinchRef.current.scale * ratio));
-          const newView = { ...v, scale: newScale };
-          viewRef.current = newView;
-          setView(newView);
-          requestAnimationFrame(() => applyAllTransforms());
-        } else {
-          pinchRef.current = { dist, scale: viewRef.current.scale };
+    // Two fingers: zoom around the fingers and follow them; cancels any drag or pan
+    function onTouchStart(e: TouchEvent) {
+      const el = canvasRef.current;
+      if (e.touches.length === 2 && el) {
+        if (dragging.current) {
+          pieceRefs.current[dragging.current.id]?.classList.remove("dragging");
+          dragging.current = null;
         }
-      } else {
-        pinchRef.current = null;
+        panning.current = null;
+        pinchRef.current = { ...pinchInfo(e.touches, el.getBoundingClientRect()), view: viewRef.current };
+      }
+    }
+
+    function onTouchMove(e: TouchEvent) {
+      const el = canvasRef.current;
+      if (e.touches.length === 2 && pinchRef.current && el) {
+        e.preventDefault();
+        const newView = pinchView(pinchRef.current, pinchInfo(e.touches, el.getBoundingClientRect()));
+        viewRef.current = newView;
+        setView(newView);
+        setGhostOff(ghostScreenOffset());
+        requestAnimationFrame(() => applyAllTransforms());
+      } else if (e.touches.length === 1 && !pinchRef.current) {
         onMove(e);
       }
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+      if (e.touches.length < 2) pinchRef.current = null;
+      if (e.touches.length === 0) onUp(e);
     }
 
     const canvas = canvasRef.current;
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchstart", onTouchStart, { passive: false });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("touchend", onUp);
+    window.addEventListener("touchend", onTouchEnd);
     canvas?.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onUp);
+      window.removeEventListener("touchend", onTouchEnd);
       canvas?.removeEventListener("wheel", onWheel);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -667,46 +686,14 @@ export default function USA() {
         ref={canvasRef}
         style={{ flex: 1, position: "relative", overflow: "hidden", cursor: "default" }}
         onMouseDown={startPan}
+        onTouchStart={startPanTouch}
       >
-        {/* Column divider lines shown when scattered */}
-        {scatterCols && (
-          <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 5 }}>
-            {/* Left side: vertical line after the last left column */}
-            <div style={{
-              position: "absolute",
-              left: scatterCols.outerPad + scatterCols.leftCols * (scatterCols.thumbW + scatterCols.colGap) + 2,
-              top: 0, bottom: 0,
-              width: 1,
-              background: "rgba(224,201,127,0.25)",
-            }} />
-            {/* Right side: vertical line before the first right column */}
-            <div style={{
-              position: "absolute",
-              right: scatterCols.outerPad + scatterCols.rightCols * (scatterCols.thumbW + scatterCols.colGap) + 2,
-              top: 0, bottom: 0,
-              width: 1,
-              background: "rgba(224,201,127,0.25)",
-            }} />
-            {/* If 2 sub-columns on left, add inner divider */}
-            {scatterCols.leftCols > 1 && (
-              <div style={{
-                position: "absolute",
-                left: scatterCols.outerPad + scatterCols.thumbW + scatterCols.colGap / 2,
-                top: 0, bottom: 0,
-                width: 1,
-                background: "rgba(224,201,127,0.12)",
-              }} />
-            )}
-            {/* If 2 sub-columns on right, add inner divider */}
-            {scatterCols.rightCols > 1 && (
-              <div style={{
-                position: "absolute",
-                right: scatterCols.outerPad + scatterCols.thumbW + scatterCols.colGap / 2,
-                top: 0, bottom: 0,
-                width: 1,
-                background: "rgba(224,201,127,0.12)",
-              }} />
-            )}
+        {/* Trays the scattered pieces sit in (hidden once the map is moved) */}
+        {trays && trayView.current === view && (
+          <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+            {trays.map((t, i) => (
+              <div key={i} style={{ position: "absolute", ...t, border: "1px solid rgba(224,201,127,0.18)", borderRadius: 8, background: "rgba(224,201,127,0.03)" }} />
+            ))}
           </div>
         )}
 
@@ -762,6 +749,7 @@ export default function USA() {
               <g
                 key={s.id}
                 ref={el => { pieceRefs.current[s.id] = el; }}
+                data-piece={s.id}
                 style={{ cursor: "grab" }}
                 onMouseDown={e => startDrag(e, s.id)}
                 onTouchStart={e => startDrag(e, s.id)}
@@ -770,6 +758,11 @@ export default function USA() {
                 onMouseMove={e => setTooltip(t => t ? { ...t, x: e.clientX, y: e.clientY } : null)}
                 onMouseLeave={() => setTooltip(null)}
               >
+                {/* Small states get a wider invisible grab area for fingers */}
+                {bboxes[s.id].w < SMALL_PIECE && bboxes[s.id].h < SMALL_PIECE && (
+                  <path d={s.path} fill="none" stroke="transparent" strokeWidth={28}
+                    strokeLinejoin="round" vectorEffect="non-scaling-stroke" pointerEvents="stroke" />
+                )}
                 <path
                   className="area-fill"
                   d={s.path}
@@ -915,7 +908,7 @@ export default function USA() {
           background: "rgba(22,33,62,0.7)", border: "1px solid rgba(58,80,112,0.5)",
           color: "#3a5070", fontSize: "0.7rem", pointerEvents: "none", whiteSpace: "nowrap",
         }}>
-          Scroll to zoom &bull; Drag canvas to pan &bull; Click a piece for details &bull; Double-click to bring to front
+          {isTouch ? <>Drag pieces with a finger &bull; Drag the background to move the map &bull; Pinch to zoom &bull; Tap a piece for details</> : <>Scroll to zoom &bull; Drag canvas to pan &bull; Click a piece for details &bull; Double-click to bring to front</>}
         </div>
       </div>
 

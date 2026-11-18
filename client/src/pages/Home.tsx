@@ -13,7 +13,9 @@
 import { AREA_INFO } from "@/lib/areaInfo";
 import { AREA_STATS } from "@/lib/areaStats";
 import { COUNTIES as RAW_AREAS, SVG_HEIGHT, SVG_WIDTH } from "@/lib/countiesData";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
+const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -234,7 +236,8 @@ export default function Home() {
   const [snapMsg,    setSnapMsg]    = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tooltip,    setTooltip]    = useState<{ name: string; x: number; y: number } | null>(null);
-  const [zOrder,     setZOrder]     = useState<string[]>(() => areas.map(a => a.id));
+  const [zOrder,     setZOrder]     = useState<string[]>(() => bySizeDescending(areas));
+  const bboxes = useMemo(() => Object.fromEntries(areas.map(a => [a.id, pathBBox(a.path)])), [areas]);
 
   // Quiz
   const [quiz, setQuiz] = useState<QuizState>({
@@ -255,7 +258,7 @@ export default function Home() {
   const dragging     = useRef<{ id: string; ox: number; oy: number } | null>(null);
   const panning      = useRef<{ ox: number; oy: number; vx: number; vy: number } | null>(null);
   const snapTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pinchRef     = useRef<{ dist: number; scale: number } | null>(null);
+  const pinchRef     = useRef<{ dist: number; mx: number; my: number; view: TouchView } | null>(null);
 
   // Keep viewRef in sync
   useEffect(() => { viewRef.current = view; }, [view]);
@@ -278,9 +281,10 @@ export default function Home() {
     if (!el) return;
     const { width: w, height: h } = el.getBoundingClientRect();
     // Centre the map initially
-    const initX = (w - svgW) / 2;
-    const initY = (h - svgH) / 2;
-    const initView = { x: 0, y: 0, scale: 1 };
+    // The assembled map lives at world (0,0); the view fits it to the screen
+    const initX = 0;
+    const initY = 0;
+    const initView = fitView(w, h, svgW, svgH);
     viewRef.current = initView;
     setView(initView);
     areas.forEach(a => { pieceStates.current[a.id] = { tx: initX, ty: initY }; });
@@ -294,18 +298,16 @@ export default function Home() {
     if (!el) return { tx: 0, ty: 0 };
     const { width: w, height: h } = el.getBoundingClientRect();
     const v = viewRef.current;
-    const worldTx = (w - svgW) / 2;
-    const worldTy = (h - svgH) / 2;
-    return {
-      tx: worldTx * v.scale + v.x,
-      ty: worldTy * v.scale + v.y,
-    };
+    void w; void h;
+    return { tx: v.x, ty: v.y };
   }, [svgW, svgH]);
 
   const [ghostOff, setGhostOff] = useState({ tx: 0, ty: 0 });
   useEffect(() => {
-    const update = () => setGhostOff(ghostScreenOffset());
-    update();
+    setGhostOff(ghostScreenOffset());
+    // Rotating an iPad or resizing the window refits the map; pieces keep their places
+    let t: ReturnType<typeof setTimeout> | undefined;
+    const update = () => { clearTimeout(t); t = setTimeout(() => resetView(), 150); };
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, [ghostScreenOffset]);
@@ -360,12 +362,14 @@ export default function Home() {
     const worldMaxX = (w - margin - v.x) / v.scale;
     const worldMinY = (margin - v.y) / v.scale;
     const worldMaxY = (h - margin - v.y) / v.scale;
-    const rangeX = Math.max(worldMaxX - worldMinX - 80, 100);
-    const rangeY = Math.max(worldMaxY - worldMinY - 80, 100);
+    // Place each piece so its own outline stays inside the visible canvas
     areas.forEach((a, i) => {
-      const tx = worldMinX + Math.random() * rangeX;
-      const ty = worldMinY + Math.random() * rangeY;
-      animatePiece(a.id, tx, ty, i * 8);
+      const b = bboxes[a.id];
+      const loX = worldMinX + b.w / 2, hiX = worldMaxX - b.w / 2;
+      const loY = worldMinY + b.h / 2, hiY = worldMaxY - b.h / 2;
+      const cx = hiX > loX ? loX + Math.random() * (hiX - loX) : (worldMinX + worldMaxX) / 2;
+      const cy = hiY > loY ? loY + Math.random() * (hiY - loY) : (worldMinY + worldMaxY) / 2;
+      animatePiece(a.id, cx - b.cx, cy - b.cy, i * 8);
     });
   }
 
@@ -373,10 +377,7 @@ export default function Home() {
   function assemble() {
     const el = canvasRef.current;
     if (!el) return;
-    const { width: w, height: h } = el.getBoundingClientRect();
-    const tx = (w - svgW) / 2;
-    const ty = (h - svgH) / 2;
-    areas.forEach((a, i) => animatePiece(a.id, tx, ty, i * 12));
+    areas.forEach((a, i) => animatePiece(a.id, 0, 0, i * 12));
   }
 
   // ── Quiz ────────────────────────────────────────────────────────────────────
@@ -419,7 +420,8 @@ export default function Home() {
 
   // ── Reset view ──────────────────────────────────────────────────────────────
   function resetView() {
-    const newView = { x: 0, y: 0, scale: 1 };
+    const r = canvasRef.current?.getBoundingClientRect();
+    const newView = r ? fitView(r.width, r.height, svgW, svgH) : { x: 0, y: 0, scale: 1 };
     viewRef.current = newView;
     setView(newView);
     requestAnimationFrame(() => applyAllTransforms());
@@ -461,6 +463,13 @@ export default function Home() {
     panning.current = { ox: e.clientX, oy: e.clientY, vx: v.x, vy: v.y };
   }
 
+  // One finger on the map background moves the map
+  function startPanTouch(e: React.TouchEvent) {
+    if (dragging.current || e.touches.length !== 1) return;
+    const v = viewRef.current;
+    panning.current = { ox: e.touches[0].clientX, oy: e.touches[0].clientY, vx: v.x, vy: v.y };
+  }
+
   // ── Wheel zoom ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const el = canvasRef.current;
@@ -487,26 +496,25 @@ export default function Home() {
     return () => el.removeEventListener("wheel", onWheel);
   }, [ghostScreenOffset]);
 
-  // ── Touch pinch zoom ────────────────────────────────────────────────────────
+  // ── Touch pinch zoom (around the fingers) ───────────────────────────────────
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        pinchRef.current = { dist: Math.hypot(dx, dy), scale: viewRef.current.scale };
+        // A second finger turns any drag or pan into a pinch
+        if (dragging.current) {
+          pieceRefs.current[dragging.current.id]?.classList.remove("dragging");
+          dragging.current = null;
+        }
+        panning.current = null;
+        pinchRef.current = { ...pinchInfo(e.touches, el.getBoundingClientRect()), view: viewRef.current };
       }
     };
     const onTouchMove = (e: TouchEvent) => {
       if (e.touches.length === 2 && pinchRef.current) {
         e.preventDefault();
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const newDist = Math.hypot(dx, dy);
-        const newScale = Math.min(Math.max(pinchRef.current.scale * (newDist / pinchRef.current.dist), 0.3), 5);
-        const v = viewRef.current;
-        const newView = { ...v, scale: newScale };
+        const newView = pinchView(pinchRef.current, pinchInfo(e.touches, el.getBoundingClientRect()));
         viewRef.current = newView;
         setView(newView);
         requestAnimationFrame(() => {
@@ -515,7 +523,7 @@ export default function Home() {
         });
       }
     };
-    const onTouchEnd = () => { pinchRef.current = null; };
+    const onTouchEnd = (e: TouchEvent) => { if (e.touches.length < 2) pinchRef.current = null; };
     el.addEventListener("touchstart", onTouchStart, { passive: false });
     el.addEventListener("touchmove", onTouchMove, { passive: false });
     el.addEventListener("touchend", onTouchEnd);
@@ -524,11 +532,15 @@ export default function Home() {
       el.removeEventListener("touchmove", onTouchMove);
       el.removeEventListener("touchend", onTouchEnd);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ghostScreenOffset]);
 
   // ── Global mouse/touch move + up ────────────────────────────────────────────
   useEffect(() => {
     function onMove(e: MouseEvent | TouchEvent) {
+      // Two fingers are a pinch, handled separately
+      if ("touches" in e && e.touches.length !== 1) return;
+      if ("touches" in e && (dragging.current || panning.current)) e.preventDefault();
       const clientX = "touches" in e ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX;
       const clientY = "touches" in e ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
 
@@ -564,9 +576,8 @@ export default function Home() {
         if (snapEnabled) {
           const el2 = canvasRef.current;
           if (el2) {
-            const { width: w, height: h } = el2.getBoundingClientRect();
-            const homeTx = (w - svgW) / 2;
-            const homeTy = (h - svgH) / 2;
+            const homeTx = 0;
+            const homeTy = 0;
             const s = pieceStates.current[id];
             const dist = Math.hypot(s.tx - homeTx, s.ty - homeTy);
             if (dist < 45) {
@@ -685,6 +696,7 @@ export default function Home() {
         ref={canvasRef}
         style={{ flex: 1, position: "relative", overflow: "hidden", cursor: dragging.current ? "grabbing" : "default" }}
         onMouseDown={startPan}
+        onTouchStart={startPanTouch}
       >
         {/* Ghost reference */}
         {showGhost && (
@@ -709,6 +721,7 @@ export default function Home() {
               <g
                 key={a.id}
                 ref={el => { pieceRefs.current[a.id] = el; }}
+                data-piece={a.id}
                 style={{ cursor: "grab" }}
                 onMouseDown={e => startDrag(e, a.id)}
                 onTouchStart={e => startDrag(e, a.id)}
@@ -717,6 +730,11 @@ export default function Home() {
                 onMouseMove={e => setTooltip(t => t ? { ...t, x: e.clientX, y: e.clientY } : null)}
                 onMouseLeave={() => setTooltip(null)}
               >
+                {/* Small areas get a wider invisible grab area for fingers */}
+                {bboxes[a.id].w < SMALL_PIECE && bboxes[a.id].h < SMALL_PIECE && (
+                  <path d={a.path} fill="none" stroke="transparent" strokeWidth={28}
+                    strokeLinejoin="round" vectorEffect="non-scaling-stroke" pointerEvents="stroke" />
+                )}
                 <path
                   className="area-fill"
                   d={a.path}
@@ -837,7 +855,7 @@ export default function Home() {
           color: "#3a5070", fontSize: "0.7rem",
           pointerEvents: "none", whiteSpace: "nowrap",
         }}>
-          Scroll to zoom &bull; Drag canvas to pan &bull; Click a piece for details &bull; Double-click to bring to front
+          {isTouch ? <>Drag pieces with a finger &bull; Drag the background to move the map &bull; Pinch to zoom &bull; Tap a piece for details</> : <>Scroll to zoom &bull; Drag canvas to pan &bull; Click a piece for details &bull; Double-click to bring to front</>}
         </div>
       </div>
 
