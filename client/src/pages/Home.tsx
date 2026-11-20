@@ -235,9 +235,8 @@ export default function Home() {
   const [showLabels,   setShowLabels]   = useState(true);
   const [showTowns,    setShowTowns]    = useState(false);
   const ts = useTextSizes("england");
-  const nameK = ts.size("names"), townK = ts.size("towns");
   const [regionColour, setRegionColour] = useState(false);
-  const [snapEnabled,  setSnapEnabled]  = useState(false);
+  const [snapEnabled,  setSnapEnabled]  = useState(true);
   const [snapMsg,    setSnapMsg]    = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tooltip,    setTooltip]    = useState<{ name: string; x: number; y: number } | null>(null);
@@ -270,6 +269,10 @@ export default function Home() {
 
   // Viewport (zoom + pan)
   const [view, setView] = useState<ViewState>({ x: 0, y: 0, scale: 1 });
+  // With fixed-size text, text stays as big on screen as when the map is fitted, however far you zoom
+  const [fitScale, setFitScale] = useState(1);
+  const zf = ts.fixed ? fitScale / view.scale : 1;
+  const nameK = ts.size("names") * zf, townK = ts.size("towns") * zf;
   const viewRef = useRef<ViewState>({ x: 0, y: 0, scale: 1 });
 
   // Refs
@@ -306,6 +309,7 @@ export default function Home() {
     const initX = 0;
     const initY = 0;
     const initView = fitView(w, h, svgW, svgH);
+    setFitScale(initView.scale);
     viewRef.current = initView;
     setView(initView);
     areas.forEach(a => { pieceStates.current[a.id] = { tx: initX, ty: initY }; });
@@ -473,7 +477,7 @@ export default function Home() {
     setQuiz({ active: false, placed: new Set(), wrong: new Set(), startTime: 0, endTime: null });
     setShowResults(false);
     setShowLabels(true);
-    setSnapEnabled(false);
+    setSnapEnabled(true);
     assemble();
   }
 
@@ -484,6 +488,7 @@ export default function Home() {
   function resetView() {
     const r = canvasRef.current?.getBoundingClientRect();
     const newView = r ? fitView(r.width, r.height, svgW, svgH) : { x: 0, y: 0, scale: 1 };
+    setFitScale(newView.scale);
     viewRef.current = newView;
     setView(newView);
     requestAnimationFrame(() => applyAllTransforms());
@@ -809,6 +814,7 @@ export default function Home() {
                 )}
                 <path
                   className="area-fill"
+                  vectorEffect="non-scaling-stroke"
                   d={a.path}
                   fill={regionColour
                     ? (info ? (REGION_COLOURS[info.region] ?? a.colour) : a.colour)
@@ -829,8 +835,8 @@ export default function Home() {
                 )}
                 {showTowns && info?.town && (
                   <g style={{ pointerEvents: "none" }}>
-                    <circle cx={a.cx} cy={a.cy + 5 + 4 * nameK} r="1.8" fill="#e0c97f" opacity="0.9" />
-                    <text x={a.cx} y={a.cy + 5 + 4 * nameK + 6 * townK}
+                    <circle cx={a.cx} cy={a.cy + 5 * zf + 4 * nameK} r={1.8 * zf} fill="#e0c97f" opacity="0.9" />
+                    <text x={a.cx} y={a.cy + 5 * zf + 4 * nameK + 6 * townK}
                       textAnchor="middle" dominantBaseline="middle"
                       fontSize={5.5 * townK} fontFamily="Inter, sans-serif"
                       fill="#e0c97f" stroke="#00000099" strokeWidth={1.5 * townK} paintOrder="stroke"
@@ -858,7 +864,7 @@ export default function Home() {
             placed={quiz.placed.size}
             total={areas.length}
             elapsed={quizElapsed}
-            onClose={() => { setShowResults(false); assemble(); setShowLabels(true); setSnapEnabled(false); }}
+            onClose={() => { setShowResults(false); assemble(); setShowLabels(true); setSnapEnabled(true); }}
           />
         )}
 

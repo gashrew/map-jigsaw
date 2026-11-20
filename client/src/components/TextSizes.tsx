@@ -21,7 +21,10 @@ export function useTextSizes(mapKey: string) {
   const size = (k: string) => sizes[k] ?? 1;
   const set = (k: string, v: number) => setSizes(s => ({ ...s, [k]: v }));
   const reset = () => setSizes({});
-  return { size, set, reset };
+  // Keep text the same size on screen when zooming (on unless switched off)
+  const fixed = (sizes._fixed ?? 1) === 1;
+  const setFixed = (v: boolean) => setSizes(s => ({ ...s, _fixed: v ? 1 : 0 }));
+  return { size, set, reset, fixed, setFixed };
 }
 
 export function TextSizeButton({ groups, ts }: { groups: TextGroup[]; ts: ReturnType<typeof useTextSizes> }) {
@@ -58,6 +61,11 @@ export function TextSizeButton({ groups, ts }: { groups: TextGroup[]; ts: Return
                 style={{ width: "100%", accentColor: "#e0c97f", cursor: "pointer" }} />
             </label>
           ))}
+          <label style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.72rem", color: "#c8d8e8", marginBottom: 8, cursor: "pointer" }}>
+            <input type="checkbox" checked={ts.fixed} onChange={e => ts.setFixed(e.target.checked)}
+              style={{ accentColor: "#e0c97f", cursor: "pointer" }} />
+            Keep text the same size when zooming
+          </label>
           <button onClick={ts.reset} style={{
             background: "none", border: "none", color: "#6a8aaa", cursor: "pointer",
             fontSize: "0.7rem", padding: 0, textDecoration: "underline",

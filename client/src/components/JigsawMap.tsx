@@ -179,14 +179,12 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
   // whatever the map's shape (the USA map is the reference), then by the sliders
   const ts = useTextSizes(cfg.key);
   const textNorm = 1.32 / Math.min(1400 / svgW, 800 / svgH);
-  const nameK = textNorm * ts.size("names");
-  const capK  = textNorm * ts.size("capitals");
 
   const [showGhost,    setShowGhost]    = useState(true);
   const [showLabels,   setShowLabels]   = useState(true);
   const [showCapitals, setShowCapitals] = useState(false);
   const [regionColour, setRegionColour] = useState(false);
-  const [snapEnabled,  setSnapEnabled]  = useState(false);
+  const [snapEnabled,  setSnapEnabled]  = useState(true);
   const [snapMsg,      setSnapMsg]      = useState(false);
   const [showDotMap,   setShowDotMap]   = useState(false);
   const [fullNames,    setFullNames]    = useState(false);
@@ -213,6 +211,12 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
   })), [states, bboxes]);
   const deckLabelsBefore = useRef(true);
   const [view,         setView]         = useState<ViewState>({ x: 0, y: 0, scale: 1 });
+  // The scale when the map is fitted to the screen. With fixed-size text, text is as big
+  // on screen as it is at that scale, however far you zoom in or out.
+  const [fitScale,     setFitScale]     = useState(1);
+  const zf    = ts.fixed ? fitScale / view.scale : 1;
+  const nameK = textNorm * ts.size("names") * zf;
+  const capK  = textNorm * ts.size("capitals") * zf;
   const [ghostOff,     setGhostOff]     = useState({ tx: 0, ty: 0 });
   const [quiz, setQuiz] = useState<QuizState>({ active: false, placed: new Set(), startTime: 0, endTime: null });
   const [showResults,  setShowResults]  = useState(false);
@@ -269,6 +273,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
     const initX = 0;
     const initY = 0;
     const initView = fitView(w, h, svgW, svgH);
+    setFitScale(initView.scale);
     viewRef.current = initView;
     setView(initView);
     states.forEach(s => { pieceStates.current[s.id] = { tx: initX, ty: initY }; });
@@ -395,6 +400,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
   function resetView() {
     const r = canvasRef.current?.getBoundingClientRect();
     const newView = r ? fitView(r.width, r.height, svgW, svgH) : { x: 0, y: 0, scale: 1 };
+    setFitScale(newView.scale);
     viewRef.current = newView;
     setView(newView);
     requestAnimationFrame(() => applyAllTransforms());
@@ -676,7 +682,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
     setShowResults(false);
     setShowLabels(true);
     setShowDotMap(false);
-    setSnapEnabled(false);
+    setSnapEnabled(true);
     assemble();
   }
 
@@ -803,7 +809,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
                       strokeWidth="1"
                     />
                     {!quiz.active && (
-                      <text x={s.cx} y={s.cy + 5 + 5 * nameK}
+                      <text x={s.cx} y={s.cy + 5 * zf + 5 * nameK}
                         textAnchor="middle" dominantBaseline="middle"
                         fontSize={5 * nameK} fontFamily="Inter, sans-serif"
                         fill="#3a5070" style={{ userSelect: "none" }}>
@@ -844,6 +850,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
                 )}
                 <path
                   className="area-fill"
+                  vectorEffect="non-scaling-stroke"
                   d={s.path}
                   fill={fill}
                   stroke={isSelected ? "#e0c97f" : "#0f1b2d"}
@@ -892,8 +899,8 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
                 })()}
                 {showCapitals && (
                   <g style={{ pointerEvents: "none" }}>
-                    <circle cx={s.cx} cy={s.cy + 4 + 6 * nameK} r={1.8 * textNorm} fill="#e0c97f" opacity="0.9" />
-                    <text x={s.cx} y={s.cy + 4 + 6 * nameK + 7.5 * capK}
+                    <circle cx={s.cx} cy={s.cy + 4 * zf + 6 * nameK} r={1.8 * textNorm * zf} fill="#e0c97f" opacity="0.9" />
+                    <text x={s.cx} y={s.cy + 4 * zf + 6 * nameK + 7.5 * capK}
                       textAnchor="middle" dominantBaseline="middle"
                       fontSize={7 * capK} fontFamily="Inter, sans-serif" fontWeight="500"
                       fill="#e0c97f" stroke="#00000099" strokeWidth={1.5 * capK} paintOrder="stroke"
@@ -934,7 +941,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
             placed={quiz.placed.size}
             total={states.length}
             elapsed={quizElapsed}
-            onClose={() => { setShowResults(false); assemble(); setShowLabels(true); setSnapEnabled(false); }}
+            onClose={() => { setShowResults(false); assemble(); setShowLabels(true); setSnapEnabled(true); }}
           />
         )}
 
