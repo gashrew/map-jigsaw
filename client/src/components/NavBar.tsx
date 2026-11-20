@@ -44,6 +44,13 @@ const MAPS: MapEntry[] = [
     subtitle: "14 areas",
     available: true,
   },
+  {
+    path: "/canada",
+    label: "Canada",
+    flag: "🇨🇦",
+    subtitle: "13 areas",
+    available: true,
+  },
 ];
 
 export function NavBar() {

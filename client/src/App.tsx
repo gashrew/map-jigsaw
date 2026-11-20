@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import USA from "./pages/USA";
 import Europe from "./pages/Europe";
 import SouthAmerica from "./pages/SouthAmerica";
+import Canada from "./pages/Canada";
 
 function Router() {
   return (
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/usa" component={USA} />
       <Route path="/europe" component={Europe} />
       <Route path="/south-america" component={SouthAmerica} />
+      <Route path="/canada" component={Canada} />
       <Route component={NotFound} />
     </Switch>
   );

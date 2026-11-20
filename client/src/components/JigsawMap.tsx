@@ -15,6 +15,7 @@ import type { MapConfig, MapPiece } from "@/lib/mapTypes";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
 import { pathArea } from "@/lib/touch";
+import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
@@ -174,6 +175,12 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
   const svgW   = cfg.width;
   const svgH   = cfg.height;
   const REGION_COLOURS = cfg.regionColours;
+  // Text sizes: each map's sizes are scaled so text looks the same size on screen
+  // whatever the map's shape (the USA map is the reference), then by the sliders
+  const ts = useTextSizes(cfg.key);
+  const textNorm = 1.32 / Math.min(1400 / svgW, 800 / svgH);
+  const nameK = textNorm * ts.size("names");
+  const capK  = textNorm * ts.size("capitals");
 
   const [showGhost,    setShowGhost]    = useState(true);
   const [showLabels,   setShowLabels]   = useState(true);
@@ -712,6 +719,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
               <ToggleLabel label="Full names" checked={fullNames}    onChange={setFullNames} />
               <ToggleLabel label="Capitals"   checked={showCapitals} onChange={setShowCapitals} />
               <ToggleLabel label="By region"  checked={regionColour} onChange={setRegionColour} />
+              <TextSizeButton ts={ts} groups={[{ key: "names", label: "Names" }, { key: "capitals", label: "Capitals" }]} />
               <Divider />
               <CtaButton onClick={scatter}>Scatter</CtaButton>
               <CtaButton onClick={assemble}>Assemble</CtaButton>
@@ -795,9 +803,9 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
                       strokeWidth="1"
                     />
                     {!quiz.active && (
-                      <text x={s.cx} y={s.cy + 10}
+                      <text x={s.cx} y={s.cy + 5 + 5 * nameK}
                         textAnchor="middle" dominantBaseline="middle"
-                        fontSize="5" fontFamily="Inter, sans-serif"
+                        fontSize={5 * nameK} fontFamily="Inter, sans-serif"
                         fill="#3a5070" style={{ userSelect: "none" }}>
                         {s.abbr}
                       </text>
@@ -847,7 +855,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
                   const label = fullNames ? s.name : s.abbr;
                   const words = label.split(' ');
                   // Scale font by area: bigger states get bigger text
-                  const baseFontSize = labelFontSize(s.area_km2, cfg.labelAreaRange);
+                  const baseFontSize = labelFontSize(s.area_km2, cfg.labelAreaRange) * nameK;
                   // Full-name multi-line: reduce font slightly to fit
                   const fontSize = fullNames
                     ? (words.length > 2 ? baseFontSize * 0.72 : words.length > 1 ? baseFontSize * 0.82 : baseFontSize)
@@ -884,11 +892,11 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
                 })()}
                 {showCapitals && (
                   <g style={{ pointerEvents: "none" }}>
-                    <circle cx={s.cx} cy={s.cy + 10} r="1.8" fill="#e0c97f" opacity="0.9" />
-                    <text x={s.cx} y={s.cy + 17}
+                    <circle cx={s.cx} cy={s.cy + 4 + 6 * nameK} r={1.8 * textNorm} fill="#e0c97f" opacity="0.9" />
+                    <text x={s.cx} y={s.cy + 4 + 6 * nameK + 7.5 * capK}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize="5.5" fontFamily="Inter, sans-serif"
-                      fill="#e0c97f" stroke="#00000099" strokeWidth="1.5" paintOrder="stroke"
+                      fontSize={7 * capK} fontFamily="Inter, sans-serif" fontWeight="500"
+                      fill="#e0c97f" stroke="#00000099" strokeWidth={1.5 * capK} paintOrder="stroke"
                       style={{ userSelect: "none" }}>
                       {s.capital}
                     </text>

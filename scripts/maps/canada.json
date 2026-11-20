@@ -1,0 +1,21 @@
+{
+  "info": "canada-info.json",
+  "admin1": "Canada",
+  "exportName": "CANADA",
+  "comment": "Lambert conformal conic, standard parallels 49°N and 77°N (as Statistics Canada)",
+  "parallels": [49, 77],
+  "rotate": [91.87, 0],
+  "window": [-145, -50, 40, 85],
+  "keepAll": [],
+  "frameExclude": [],
+  "merge": {},
+  "labelAt": {},
+  "contextBox": [-170, -10, 35, 90],
+  "shades": {
+    "Atlantic": ["#1d8a70", "#3daa90", "#5dc4aa", "#0d7a60"],
+    "Central": ["#c05a34", "#e07a54"],
+    "Prairies": ["#3a7abf", "#6aaae0", "#4a8fd4"],
+    "West Coast": ["#b8923a"],
+    "North": ["#9a8ecf", "#7a6ebf", "#baaee0"]
+  }
+}

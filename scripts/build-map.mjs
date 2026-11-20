@@ -1,18 +1,29 @@
-// Builds a map's data file from Natural Earth 1:50m (world-atlas) and a spec in scripts/maps/.
-// Usage (with world-atlas, topojson-client, d3-geo, polylabel installed):
+// Builds a map's data file from Natural Earth 1:50m and a spec in scripts/maps/.
+// Countries come from world-atlas; provinces/states (spec.admin1 = country name) come from
+// Natural Earth's ne_50m_admin_1_states_provinces.geojson, passed as a third argument.
+// Usage (with world-atlas, topojson-client, topojson-server, d3-geo, polylabel installed):
 //   node scripts/build-map.mjs scripts/maps/europe.json client/src/lib/europeData.ts
+//   node scripts/build-map.mjs scripts/maps/canada.json client/src/lib/canadaData.ts ne_50m_admin_1_states_provinces.geojson
 import fs from "fs";
 import path from "path";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const topo = require("topojson-client");
-const { geoAzimuthalEqualArea, geoPath, geoBounds, geoCentroid } = require("d3-geo");
+const { geoAzimuthalEqualArea, geoConicConformal, geoPath, geoBounds, geoCentroid } = require("d3-geo");
 const polylabel = require("polylabel");
-const [specFile, outFile] = process.argv.slice(2);
+const [specFile, outFile, admin1File] = process.argv.slice(2);
 const spec = JSON.parse(fs.readFileSync(specFile));
 const info = JSON.parse(fs.readFileSync(path.join(path.dirname(specFile), spec.info)));
-const t = require("world-atlas/countries-50m.json");
-const geoms = t.objects.countries.geometries;
+const world = require("world-atlas/countries-50m.json");
+let t = world, geoms = world.objects.countries.geometries;
+if (spec.admin1) {
+  // Build a topology of the country's provinces so shared borders and neighbours work as for countries
+  const fc = JSON.parse(fs.readFileSync(admin1File));
+  fc.features = fc.features.filter(f => f.properties.admin === spec.admin1)
+    .map(f => ({ type: "Feature", properties: { name: f.properties.name }, geometry: f.geometry }));
+  t = require("topojson-server").topology({ p: fc }, 1e6);
+  geoms = t.objects.p.geometries;
+}
 const byName = n => geoms.filter(g => g.properties.name === n);
 const MERGE = spec.merge || {};
 // Each entry may take its shape from another feature (French Guiana from France)
@@ -35,12 +46,16 @@ const pieces = Object.keys(info).map(name => {
 });
 const used = new Set(Object.keys(info).flatMap(n => [srcOf(n), ...(MERGE[n] || [])]));
 const [c0, c1, c2, c3] = spec.contextBox;
-const context = geoms.filter(g => !used.has(g.properties.name)).map(g => trimPolys(topo.feature(t, g), true))
-  .filter(f => { const [[a, b], [c, d]] = geoBounds(f); return c > c0 && a < c1 && d > c2 && b < c3; });
+const ctxGeoms = spec.admin1 ? world.objects.countries.geometries.filter(g => g.properties.name !== spec.admin1)
+  : geoms.filter(g => !used.has(g.properties.name));
+const context = ctxGeoms.map(g => trimPolys(topo.feature(spec.admin1 ? world : t, g), true))
+  .filter(f => { const [[a, b], [c, d]] = geoBounds(f); return (a > c || (c > c0 && a < c1)) && d > c2 && b < c3; }); // a > c: crosses the date line
 
-// Lambert azimuthal equal-area; the frame fits every piece except any in frameExclude (clipped at the edge)
+// The frame fits every piece except any in frameExclude (clipped at the edge)
 const W = spec.width || 1000, M = 6;
-const proj = geoAzimuthalEqualArea().rotate(spec.rotate);
+// Lambert conformal conic when the spec gives parallels (as Statistics Canada uses), else azimuthal equal-area
+const proj = spec.parallels ? geoConicConformal().parallels(spec.parallels).rotate(spec.rotate)
+  : geoAzimuthalEqualArea().rotate(spec.rotate);
 const frame = { type: "FeatureCollection", features: pieces.filter(p => !(spec.frameExclude || []).includes(p.name)).map(p => p.f) };
 proj.fitWidth(W - 2 * M, frame);
 const [[x0, y0], [x1, y1]] = geoPath(proj).bounds(frame);

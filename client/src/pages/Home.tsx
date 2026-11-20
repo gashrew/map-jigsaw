@@ -17,6 +17,7 @@ import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView,
 import { pathArea } from "@/lib/touch";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
+import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -233,6 +234,8 @@ export default function Home() {
   const [showGhost,    setShowGhost]    = useState(true);
   const [showLabels,   setShowLabels]   = useState(true);
   const [showTowns,    setShowTowns]    = useState(false);
+  const ts = useTextSizes("england");
+  const nameK = ts.size("names"), townK = ts.size("towns");
   const [regionColour, setRegionColour] = useState(false);
   const [snapEnabled,  setSnapEnabled]  = useState(false);
   const [snapMsg,    setSnapMsg]    = useState(false);
@@ -725,6 +728,7 @@ export default function Home() {
               <ToggleLabel label="Labels"       checked={showLabels}    onChange={setShowLabels} />
               <ToggleLabel label="Towns"        checked={showTowns}     onChange={setShowTowns} />
               <ToggleLabel label="By region"    checked={regionColour}  onChange={setRegionColour} />
+              <TextSizeButton ts={ts} groups={[{ key: "names", label: "Names" }, { key: "towns", label: "Towns" }]} />
               <Divider />
               <CtaButton onClick={scatter}>Scatter</CtaButton>
               <CtaButton onClick={assemble}>Assemble</CtaButton>
@@ -817,19 +821,19 @@ export default function Home() {
                 {showLabels && (
                   <text x={a.cx} y={a.cy}
                     textAnchor="middle" dominantBaseline="middle"
-                    fontSize="7.5" fontFamily="Inter, system-ui, sans-serif" fontWeight="600"
-                    fill="white" stroke="rgba(0,0,0,0.6)" strokeWidth="1.05" strokeLinejoin="round" paintOrder="stroke"
+                    fontSize={7.5 * nameK} fontFamily="Inter, system-ui, sans-serif" fontWeight="600"
+                    fill="white" stroke="rgba(0,0,0,0.6)" strokeWidth={1.05 * nameK} strokeLinejoin="round" paintOrder="stroke"
                     style={{ pointerEvents: "none", userSelect: "none" }}>
                     {a.name}
                   </text>
                 )}
                 {showTowns && info?.town && (
                   <g style={{ pointerEvents: "none" }}>
-                    <circle cx={a.cx} cy={a.cy + 9} r="1.8" fill="#e0c97f" opacity="0.9" />
-                    <text x={a.cx} y={a.cy + 15}
+                    <circle cx={a.cx} cy={a.cy + 5 + 4 * nameK} r="1.8" fill="#e0c97f" opacity="0.9" />
+                    <text x={a.cx} y={a.cy + 5 + 4 * nameK + 6 * townK}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize="5.5" fontFamily="Inter, sans-serif"
-                      fill="#e0c97f" stroke="#00000099" strokeWidth="1.5" paintOrder="stroke"
+                      fontSize={5.5 * townK} fontFamily="Inter, sans-serif"
+                      fill="#e0c97f" stroke="#00000099" strokeWidth={1.5 * townK} paintOrder="stroke"
                       style={{ userSelect: "none" }}>
                       {info.town}
                     </text>

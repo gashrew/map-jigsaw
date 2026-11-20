@@ -8,6 +8,7 @@ import { US_STATES, SVG_WIDTH as USA_W, SVG_HEIGHT as USA_H } from "@/lib/usStat
 import { COUNTIES, SVG_WIDTH as ENG_W, SVG_HEIGHT as ENG_H } from "@/lib/countiesData";
 import { EUROPE, EUROPE_CONTEXT, SVG_WIDTH as EU_W, SVG_HEIGHT as EU_H } from "@/lib/europeData";
 import { SOUTH_AMERICA, SOUTH_AMERICA_CONTEXT, SVG_WIDTH as SA_W, SVG_HEIGHT as SA_H } from "@/lib/southAmericaData";
+import { CANADA, CANADA_CONTEXT, SVG_WIDTH as CA_W, SVG_HEIGHT as CA_H } from "@/lib/canadaData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -75,6 +76,23 @@ function SouthAmericaMini() {
         {SOUTH_AMERICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {SOUTH_AMERICA.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="2" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function CanadaMini() {
+  const W = 230, H = 200;
+  const sc = Math.min(W / CA_W, H / CA_H) * 0.95;
+  const ox = (W - CA_W * sc) / 2;
+  const oy = (H - CA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {CANADA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {CANADA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
         ))}
       </g>
     </svg>
@@ -276,6 +294,17 @@ export default function Landing() {
           unit="pieces"
           features={["12 countries", "French Guiana & Falklands", "Region colours", "Capitals", "Quiz mode"]}
           preview={<SouthAmericaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/canada"
+          flag="🇨🇦"
+          title="Canada"
+          subtitle="Natural Earth boundary data"
+          count={CANADA.length}
+          unit="areas"
+          features={["10 provinces + 3 territories", "Region colours", "Capitals", "2021 census population", "Quiz mode"]}
+          preview={<CanadaMini />}
           available={true}
         />
         <MapCard

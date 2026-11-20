@@ -1,0 +1,15 @@
+{
+ "Alberta": ["AB","Edmonton","Prairies",4262635,661848],
+ "British Columbia": ["BC","Victoria","West Coast",5000879,944735],
+ "Manitoba": ["MB","Winnipeg","Prairies",1342153,647797],
+ "New Brunswick": ["NB","Fredericton","Atlantic",775610,72908],
+ "Newfoundland and Labrador": ["NL","St. John's","Atlantic",510550,405212],
+ "Nova Scotia": ["NS","Halifax","Atlantic",969383,55284],
+ "Northwest Territories": ["NT","Yellowknife","North",41070,1346106],
+ "Nunavut": ["NU","Iqaluit","North",36858,2093190],
+ "Ontario": ["ON","Toronto","Central",14223942,1076395],
+ "Prince Edward Island": ["PE","Charlottetown","Atlantic",154331,5660],
+ "Québec": ["QC","Quebec City","Central",8501833,1542056],
+ "Saskatchewan": ["SK","Regina","Prairies",1132505,651036],
+ "Yukon": ["YT","Whitehorse","North",40232,482443]
+}
