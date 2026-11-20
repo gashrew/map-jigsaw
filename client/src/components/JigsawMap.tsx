@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
 import { pathArea } from "@/lib/touch";
 import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
+import { DetailsModal, Flag, LinkChips, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
@@ -61,9 +62,10 @@ function RegionLegend({ colours }: { colours: Record<string, string> }) {
 }
 
 // ─── Info Panel ───────────────────────────────────────────────────────────────
-function InfoPanel({ id, cfg, onClose }: { id: string; cfg: MapConfig; onClose: () => void }) {
+function InfoPanel({ id, cfg, onClose, onMore }: { id: string; cfg: MapConfig; onClose: () => void; onMore: () => void }) {
   const state = cfg.pieces.find(s => s.id === id);
   if (!state) return null;
+  const d = cfg.details, x = d?.pieces[id];
 
   function fmtPop(n: number) {
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(2).replace(/\.?0+$/, "") + "m";
@@ -72,8 +74,9 @@ function InfoPanel({ id, cfg, onClose }: { id: string; cfg: MapConfig; onClose: 
   }
 
   return (
-    <div style={{
-      position: "absolute", top: 60, right: 12, width: 240, zIndex: 500,
+    <div data-panel onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} style={{
+      position: "absolute", top: 60, right: 12, width: x ? 280 : 240, zIndex: 500,
+      maxHeight: "calc(100% - 110px)", overflowY: "auto",
       background: "rgba(16,27,50,0.97)", border: "1px solid rgba(224,201,127,0.35)",
       borderRadius: 6, boxShadow: "0 8px 32px rgba(0,0,0,0.7)",
       fontFamily: "Inter, sans-serif",
@@ -82,6 +85,7 @@ function InfoPanel({ id, cfg, onClose }: { id: string; cfg: MapConfig; onClose: 
       <div style={{ height: 4, background: state.colour, borderRadius: "6px 6px 0 0" }} />
       <div style={{ padding: "10px 12px 8px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          {x && <span style={{ marginRight: 8, marginTop: 2 }}><Flag file={x.flag} height={20} /></span>}
           <h2 style={{
             fontFamily: "'Playfair Display', Georgia, serif",
             fontSize: "0.95rem", fontWeight: 700, color: "#e0c97f",
@@ -97,13 +101,28 @@ function InfoPanel({ id, cfg, onClose }: { id: string; cfg: MapConfig; onClose: 
           borderRadius: 10, fontSize: "0.65rem", letterSpacing: "0.06em",
           background: "rgba(224,201,127,0.12)", color: "#a89050",
           textTransform: "uppercase",
-        }}>{cfg.typeLabel} · {state.abbr}</span>
+        }}>{x?.type ?? cfg.typeLabel} · {state.abbr}</span>
       </div>
       <div style={{ padding: "10px 12px" }}>
         <Row label={cfg.capitalLabel} value={state.capital} />
+        {x?.largestCity && <Row label="Largest city" value={x.largestCity} />}
         <Row label="Region"           value={state.region} />
         <Row label={cfg.popLabel}     value={fmtPop(state.pop)} />
         <Row label={cfg.areaLabel}    value={state.area_km2.toLocaleString() + " km²"} />
+        {d && x?.gdpPerCap != null && (
+          <Row label={`GDP per person (${d.gdpYear})`} value={`${d.currency}${x.gdpPerCap.toLocaleString()} — ${vsNational(x.gdpPerCap, d).text}`} />
+        )}
+        {d && x?.gdp != null && <Row label={`GDP (${d.gdpYear})`} value={fmtGdp(x.gdp, d.currency)} />}
+        {d && x && (
+          <div style={{ margin: "10px 0 4px" }}>
+            <LinkChips links={pieceLinks(state, x, d)} />
+            <button onClick={onMore} style={{
+              marginTop: 10, width: "100%", padding: "6px 0", borderRadius: 5, cursor: "pointer",
+              background: "#0f3460", color: "#e0c97f", border: "1px solid rgba(224,201,127,0.4)",
+              fontSize: "0.78rem", fontFamily: "Inter, sans-serif",
+            }}>More details…</button>
+          </div>
+        )}
         {state.note && <div style={{ fontSize: "0.68rem", color: "#6a80a0", fontStyle: "italic", lineHeight: 1.35 }}>{state.note}</div>}
       </div>
     </div>
@@ -191,6 +210,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
   const [flash,        setFlash]        = useState<FlashState | null>(null);
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedId,   setSelectedId]   = useState<string | null>(null);
+  const [detailsId,    setDetailsId]    = useState<string | null>(null);
   const [tooltip,      setTooltip]      = useState<{ name: string; x: number; y: number } | null>(null);
   const [zOrder,       setZOrder]       = useState<string[]>(() => bySizeDescending(states));
   const bboxes = useMemo(() => Object.fromEntries(states.map(s => [s.id, pathBBox(s.path)])), [states]);
@@ -544,6 +564,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
     }
 
     function onWheel(e: WheelEvent) {
+      if ((e.target as Element).closest?.("[data-panel]")) return; // let the info panel scroll
       e.preventDefault();
       const el = canvasRef.current;
       if (!el) return;
@@ -915,7 +936,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
         </svg>
 
         {regionColour && !quiz.active && <RegionLegend colours={REGION_COLOURS} />}
-        {selectedId && !quiz.active && <InfoPanel id={selectedId} cfg={cfg} onClose={() => setSelectedId(null)} />}
+        {selectedId && !quiz.active && <InfoPanel id={selectedId} cfg={cfg} onClose={() => setSelectedId(null)} onMore={() => setDetailsId(selectedId)} />}
 
         {/* Flash overlay for correct / wrong placement */}
         {flash && (() => {
@@ -1003,6 +1024,11 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
           onDrop={deckDrop} onRestart={restartDeck} onExit={exitDeck} />
       )}
       </div>
+
+      {detailsId && cfg.details && (() => {
+        const p = states.find(x => x.id === detailsId);
+        return p ? <DetailsModal piece={p} cfg={cfg} onClose={() => setDetailsId(null)} /> : null;
+      })()}
 
       <style>{`
         @keyframes flashPulse {

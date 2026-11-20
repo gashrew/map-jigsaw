@@ -31,4 +31,31 @@ export interface MapConfig {
   regionColours: Record<string, string>;
   labelAreaRange: [number, number]; // area_km2 that gets the smallest and largest label
   context?: string[];       // land outside the jigsaw, drawn in the background
+  details?: MapDetails;     // extra facts and links for the information panels
+}
+
+// Extra facts for the information panels (optional, per map)
+export interface PieceDetails {
+  about: string;
+  type?: string;                             // overrides the map's typeLabel, e.g. "Territory"
+  largestCity?: string;
+  places?: string[];                         // places to know
+  identity?: { label: string; value: string }[]; // joined/independence, motto, languages…
+  flag?: string;                             // Wikimedia Commons file name
+  gdp?: number;                              // millions, in the map's currency
+  gdpPerCap?: number;
+  industries?: string[];
+  wiki: string;                              // English Wikipedia article title
+  official?: string;                         // official website
+  search?: string;                           // search words for YouTube and news (default: name)
+}
+
+export interface MapDetails {
+  currency: string;                          // "C$", "£", "$"
+  gdpYear: number;
+  gdpSource: string;
+  national: { label: string; gdp: number; gdpPerCap: number };
+  searchSuffix?: string;                     // added to YouTube searches, e.g. "Canada"
+  news: { label: string; url: (q: string) => string };
+  pieces: Record<string, PieceDetails>;
 }
