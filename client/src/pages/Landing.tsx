@@ -6,6 +6,7 @@
 
 import { US_STATES, SVG_WIDTH as USA_W, SVG_HEIGHT as USA_H } from "@/lib/usStatesData";
 import { COUNTIES, SVG_WIDTH as ENG_W, SVG_HEIGHT as ENG_H } from "@/lib/countiesData";
+import { EUROPE, EUROPE_CONTEXT, SVG_WIDTH as EU_W, SVG_HEIGHT as EU_H } from "@/lib/europeData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -39,6 +40,23 @@ function USAMini() {
       <g transform={`translate(${ox},${oy}) scale(${sc})`}>
         {US_STATES.map(s => (
           <path key={s.id} d={s.path} fill={s.colour} stroke="#0f1b2d" strokeWidth="1.2" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function EuropeMini() {
+  const W = 200, H = 172;
+  const sc = Math.min(W / EU_W, H / EU_H) * 0.95;
+  const ox = (W - EU_W * sc) / 2;
+  const oy = (H - EU_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {EUROPE_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {EUROPE.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.2" fillRule="evenodd" />
         ))}
       </g>
     </svg>
@@ -221,6 +239,17 @@ export default function Landing() {
           available={true}
         />
         <MapCard
+          href="/europe"
+          flag="🌍"
+          title="Europe"
+          subtitle="Natural Earth boundary data"
+          count={EUROPE.length}
+          unit="countries"
+          features={["Every European country", "Region colours", "Capitals", "Population data", "Quiz mode"]}
+          preview={<EuropeMini />}
+          available={true}
+        />
+        <MapCard
           href="/coming-soon"
           flag="🏴󠁧󠁢󠁳󠁣󠁴󠁿"
           title="Scotland"
@@ -242,7 +271,7 @@ export default function Landing() {
         marginTop: 40, fontSize: "0.65rem", color: "#2a3a50",
         fontFamily: "Inter, sans-serif", textAlign: "center",
       }}>
-        Boundary data: ONS Open Geography Portal · US Census Bureau TIGER 2020
+        Boundary data: ONS Open Geography Portal · US Census Bureau TIGER 2020 · Natural Earth
       </p>
     </div>
   );
