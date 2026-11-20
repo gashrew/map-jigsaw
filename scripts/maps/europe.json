@@ -1,0 +1,19 @@
+{
+  "info": "europe-info.json",
+  "exportName": "EUROPE",
+  "comment": "Lambert azimuthal equal-area centred on 12°E 52°N",
+  "rotate": [-12, -52],
+  "window": [-24.6, 50, 33, 73],
+  "keepAll": ["Russia"],
+  "frameExclude": ["Russia"],
+  "merge": { "Cyprus": ["N. Cyprus"], "Finland": ["Åland"] },
+  "labelAt": { "Russia": [42, 57] },
+  "contextBox": [-30, 60, 25, 75],
+  "shades": {
+    "Northern": ["#3a7abf", "#4a8fd4", "#6aaae0", "#8abce8", "#2a6aaf"],
+    "Western": ["#1d8a70", "#2d9a80", "#3daa90", "#5dc4aa", "#0d7a60"],
+    "Southern": ["#c05a34", "#d06a44", "#e07a54", "#f08a64", "#b04a24", "#e09a74"],
+    "Eastern": ["#5a4e9f", "#6a5eaf", "#7a6ebf", "#9a8ecf", "#4a3e8f", "#baaee0"],
+    "Western Asia": ["#b8923a", "#c9a24a"]
+  }
+}

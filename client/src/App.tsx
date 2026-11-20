@@ -10,6 +10,7 @@ import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import USA from "./pages/USA";
 import Europe from "./pages/Europe";
+import SouthAmerica from "./pages/SouthAmerica";
 
 function Router() {
   return (
@@ -18,6 +19,7 @@ function Router() {
       <Route path="/england" component={Home} />
       <Route path="/usa" component={USA} />
       <Route path="/europe" component={Europe} />
+      <Route path="/south-america" component={SouthAmerica} />
       <Route component={NotFound} />
     </Switch>
   );

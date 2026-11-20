@@ -37,6 +37,13 @@ const MAPS: MapEntry[] = [
     subtitle: "47 countries",
     available: true,
   },
+  {
+    path: "/south-america",
+    label: "S. America",
+    flag: "🌎",
+    subtitle: "14 areas",
+    available: true,
+  },
 ];
 
 export function NavBar() {

@@ -1,0 +1,18 @@
+{
+  "info": "south-america-info.json",
+  "exportName": "SOUTH_AMERICA",
+  "comment": "Lambert azimuthal equal-area centred on 60°W 20°S",
+  "rotate": [60, 20],
+  "window": [-82, -33, -57, 14],
+  "keepAll": [],
+  "frameExclude": [],
+  "merge": {},
+  "labelAt": {},
+  "contextBox": [-95, -25, -65, 20],
+  "shades": {
+    "Andean": ["#c05a34", "#d06a44", "#e07a54", "#f08a64", "#b04a24"],
+    "Southern Cone": ["#3a7abf", "#4a8fd4", "#6aaae0", "#8abce8", "#2a6aaf"],
+    "Guianas": ["#1d8a70", "#3daa90", "#5dc4aa"],
+    "Brazil": ["#6a5eaf"]
+  }
+}

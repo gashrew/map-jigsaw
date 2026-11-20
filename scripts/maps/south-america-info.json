@@ -1,0 +1,16 @@
+{
+ "Argentina": ["AR","Buenos Aires","Southern Cone",46000000,2780400],
+ "Bolivia": ["BO","Sucre","Andean",12400000,1098581,null,"Sucre is the constitutional capital; La Paz is the seat of government"],
+ "Brazil": ["BR","Brasília","Brazil",212600000,8515767],
+ "Chile": ["CL","Santiago","Southern Cone",19800000,756102],
+ "Colombia": ["CO","Bogotá","Andean",52700000,1141748],
+ "Ecuador": ["EC","Quito","Andean",18100000,283561,null,"Area includes the Galápagos Islands, which are not shown"],
+ "Guyana": ["GY","Georgetown","Guianas",830000,214969],
+ "Paraguay": ["PY","Asunción","Southern Cone",6400000,406752],
+ "Peru": ["PE","Lima","Andean",34200000,1285216],
+ "Suriname": ["SR","Paramaribo","Guianas",630000,163820],
+ "Uruguay": ["UY","Montevideo","Southern Cone",3440000,176215],
+ "Venezuela": ["VE","Caracas","Andean",28400000,916445,null,"Population is uncertain because of large-scale emigration"],
+ "French Guiana": ["GF","Cayenne","Guianas",295000,83534,null,"An overseas region of France, not a separate country","France"],
+ "Falkland Is.": ["FK","Stanley","Southern Cone",3700,12173,"Falkland Islands","A British Overseas Territory; Argentina claims it as the Islas Malvinas"]
+}

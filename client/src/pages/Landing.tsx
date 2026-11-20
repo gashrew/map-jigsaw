@@ -7,6 +7,7 @@
 import { US_STATES, SVG_WIDTH as USA_W, SVG_HEIGHT as USA_H } from "@/lib/usStatesData";
 import { COUNTIES, SVG_WIDTH as ENG_W, SVG_HEIGHT as ENG_H } from "@/lib/countiesData";
 import { EUROPE, EUROPE_CONTEXT, SVG_WIDTH as EU_W, SVG_HEIGHT as EU_H } from "@/lib/europeData";
+import { SOUTH_AMERICA, SOUTH_AMERICA_CONTEXT, SVG_WIDTH as SA_W, SVG_HEIGHT as SA_H } from "@/lib/southAmericaData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -57,6 +58,23 @@ function EuropeMini() {
         {EUROPE_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {EUROPE.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.2" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function SouthAmericaMini() {
+  const W = 160, H = 200;
+  const sc = Math.min(W / SA_W, H / SA_H) * 0.92;
+  const ox = (W - SA_W * sc) / 2;
+  const oy = (H - SA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {SOUTH_AMERICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {SOUTH_AMERICA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="2" fillRule="evenodd" />
         ))}
       </g>
     </svg>
@@ -247,6 +265,17 @@ export default function Landing() {
           unit="countries"
           features={["Every European country", "Region colours", "Capitals", "Population data", "Quiz mode"]}
           preview={<EuropeMini />}
+          available={true}
+        />
+        <MapCard
+          href="/south-america"
+          flag="🌎"
+          title="South America"
+          subtitle="Natural Earth boundary data"
+          count={SOUTH_AMERICA.length}
+          unit="pieces"
+          features={["12 countries", "French Guiana & Falklands", "Region colours", "Capitals", "Quiz mode"]}
+          preview={<SouthAmericaMini />}
           available={true}
         />
         <MapCard
