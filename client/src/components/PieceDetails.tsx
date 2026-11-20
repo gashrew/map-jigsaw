@@ -23,6 +23,17 @@ export function vsNational(perCap: number, d: MapDetails) {
   return { pct, text: pct === 0 ? `same as ${d.national.label}` : `${Math.abs(pct)}% ${pct > 0 ? "above" : "below"} ${d.national.label}` };
 }
 
+const BBC = { label: "BBC News", url: (q: string) => `https://www.bbc.co.uk/search?q=${encodeURIComponent(q)}` };
+
+// A piece's economic figures: its own, or its region's when the map only has regional figures
+export function econOf(p: MapPiece, x: PieceDetails | undefined, d: MapDetails) {
+  if (d.regional) {
+    const r = d.regional[p.region];
+    return r ? { gdp: r.gdp, gdpPerCap: r.gdpPerCap, scope: `${p.region} region` } : null;
+  }
+  return x && (x.gdp != null || x.gdpPerCap != null) ? { gdp: x.gdp, gdpPerCap: x.gdpPerCap, scope: "" } : null;
+}
+
 export function flagUrl(file: string, width = 160) {
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=${width}`;
 }
@@ -35,7 +46,7 @@ export function pieceLinks(p: MapPiece, x: PieceDetails, d: MapDetails) {
     ...(x.official ? [{ label: "Official site", icon: "🏛", url: x.official, note: "Government website" }] : []),
     { label: "YouTube: travel", icon: "▶", url: yt("travel guide"), note: "Travel guides and tours" },
     { label: "YouTube: history", icon: "▶", url: yt("history"), note: "History documentaries" },
-    { label: d.news.label, icon: "📰", url: d.news.url(q), note: "Latest news" },
+    { label: (d.news ?? BBC).label, icon: "📰", url: (d.news ?? BBC).url(q), note: "Latest news" },
   ];
 }
 
@@ -73,11 +84,16 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
   if (!x) return null;
   const links = pieceLinks(piece, x, d);
   const density = piece.pop / piece.area_km2;
-  // Every piece's GDP per head, for the comparison chart
-  const ranked = cfg.pieces.map(p => ({ p, v: d.pieces[p.id]?.gdpPerCap })).filter(r => r.v)
-    .sort((a, b) => b.v! - a.v!) as { p: MapPiece; v: number }[];
+  const econ = econOf(piece, x, d);
+  // GDP per head of every piece (or every region), for the comparison chart
+  const ranked = (d.regional
+    ? Object.entries(d.regional).map(([k, v]) => ({ id: k, label: k, v: v.gdpPerCap }))
+    : cfg.pieces.map(p => ({ id: p.id, label: p.abbr, v: d.pieces[p.id]?.gdpPerCap as number })).filter(r => r.v)
+  ).sort((a, b) => b.v - a.v);
+  const meId = d.regional ? piece.region : piece.id;
   const max = Math.max(...ranked.map(r => r.v), d.national.gdpPerCap);
-  const rank = ranked.findIndex(r => r.p.id === piece.id) + 1;
+  const rank = ranked.findIndex(r => r.id === meId) + 1;
+  const labelW = d.regional ? 150 : 22;
 
   return (
     <div onPointerDown={e => { if (e.target === e.currentTarget) onClose(); }} style={{
@@ -96,7 +112,7 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
           <Flag file={x.flag} height={40} />
           <div style={{ flex: 1 }}>
             <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "1.5rem", color: GOLD, margin: 0, lineHeight: 1.2 }}>{piece.name}</h2>
-            <div style={{ fontSize: "0.7rem", color: MUTED, textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 2 }}>{x.type ?? cfg.typeLabel} · {piece.abbr} · {piece.region}</div>
+            <div style={{ fontSize: "0.7rem", color: MUTED, textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 2 }}>{[x.type ?? cfg.typeLabel, piece.abbr !== piece.name ? piece.abbr : null, piece.region].filter(Boolean).join(" · ")}</div>
           </div>
           <button onClick={onClose} aria-label="Close" style={{ background: "none", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, color: TEXT, cursor: "pointer", fontSize: "1rem", width: 34, height: 34 }}>✕</button>
         </div>
@@ -108,7 +124,7 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
             {/* At a glance */}
             <Section title="At a glance">
               <Fact label={cfg.capitalLabel} value={piece.capital} />
-              {x.largestCity && <Fact label="Largest city" value={x.largestCity} />}
+              {x.largestCity && !x.largestCity.startsWith(piece.capital) && <Fact label="Largest city" value={x.largestCity} />}
               <Fact label={cfg.popLabel} value={piece.pop.toLocaleString()} />
               <Fact label={cfg.areaLabel} value={piece.area_km2.toLocaleString() + " km²"} />
               <Fact label="People per km²" value={density < 1 ? density.toFixed(2) : density < 10 ? density.toFixed(1) : Math.round(density).toLocaleString()} />
@@ -117,17 +133,20 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
 
             {/* Economy */}
             <Section title={`Economy (${d.gdpYear})`}>
-              {x.gdp != null && <Fact label="GDP" value={`${fmtGdp(x.gdp, d.currency)} — ${((x.gdp / d.national.gdp) * 100).toFixed(1)}% of ${d.national.label}`} />}
-              {x.gdpPerCap != null && (
-                <Fact label="GDP per person" value={`${d.currency}${x.gdpPerCap.toLocaleString()} — ${vsNational(x.gdpPerCap, d).text} (${d.currency}${d.national.gdpPerCap.toLocaleString()}), ${ordinal(rank)} of ${ranked.length}`} />
+              {econ?.scope && <div style={{ fontSize: "0.75rem", color: "#8899aa", marginBottom: 8 }}>Figures are for the whole {econ.scope}; they are not published for each area here.</div>}
+              {econ?.gdp != null && <Fact label={econ.scope ? `GDP of the ${econ.scope}` : "GDP"} value={`${fmtGdp(econ.gdp, d.currency)} — ${((econ.gdp / d.national.gdp) * 100).toFixed(1)}% of ${d.national.totalLabel ?? d.national.label}`} />}
+              {econ?.gdpPerCap != null && (
+                <Fact label={econ.scope ? `GDP per person in the ${econ.scope}` : "GDP per person"} value={`${d.currency}${econ.gdpPerCap.toLocaleString()} — ${vsNational(econ.gdpPerCap, d).text} (${d.currency}${d.national.gdpPerCap.toLocaleString()})${rank ? `, ${ordinal(rank)} of ${ranked.length}` : ""}`} />
               )}
+              {!econ && <div style={{ fontSize: "0.8rem", color: "#8899aa", marginBottom: 8 }}>No separate economic figures are published for {piece.name}.</div>}
+              {d.econNote && <div style={{ fontSize: "0.7rem", color: "#8899aa", marginBottom: 8, fontStyle: "italic" }}>{d.econNote}</div>}
               {ranked.length > 1 && (
                 <div style={{ margin: "4px 0 10px" }} aria-label="GDP per person compared">
                   {ranked.map(r => {
-                    const me = r.p.id === piece.id;
+                    const me = r.id === meId;
                     return (
-                      <div key={r.p.id} style={{ display: "flex", alignItems: "center", gap: 6, height: 14, fontSize: "0.62rem" }}>
-                        <span style={{ width: 22, color: me ? GOLD : MUTED, fontWeight: me ? 700 : 400 }}>{r.p.abbr}</span>
+                      <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 6, height: 14, fontSize: "0.62rem" }}>
+                        <span style={{ width: labelW, flexShrink: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: me ? GOLD : MUTED, fontWeight: me ? 700 : 400 }}>{r.label}</span>
                         <div style={{ flex: 1, position: "relative", height: 8 }}>
                           <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${(r.v / max) * 100}%`, background: me ? GOLD : "rgba(106,138,170,0.45)", borderRadius: 2 }} />
                           <div style={{ position: "absolute", left: `${(d.national.gdpPerCap / max) * 100}%`, top: -3, bottom: -3, borderLeft: "1px dashed rgba(255,255,255,0.45)" }} />

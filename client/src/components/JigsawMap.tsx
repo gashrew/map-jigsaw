@@ -16,7 +16,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
 import { pathArea } from "@/lib/touch";
 import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
-import { DetailsModal, Flag, LinkChips, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
+import { DetailsModal, Flag, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
@@ -105,14 +105,18 @@ function InfoPanel({ id, cfg, onClose, onMore }: { id: string; cfg: MapConfig; o
       </div>
       <div style={{ padding: "10px 12px" }}>
         <Row label={cfg.capitalLabel} value={state.capital} />
-        {x?.largestCity && <Row label="Largest city" value={x.largestCity} />}
+        {x?.largestCity && !x.largestCity.startsWith(state.capital) && <Row label="Largest city" value={x.largestCity} />}
         <Row label="Region"           value={state.region} />
         <Row label={cfg.popLabel}     value={fmtPop(state.pop)} />
         <Row label={cfg.areaLabel}    value={state.area_km2.toLocaleString() + " km²"} />
-        {d && x?.gdpPerCap != null && (
-          <Row label={`GDP per person (${d.gdpYear})`} value={`${d.currency}${x.gdpPerCap.toLocaleString()} — ${vsNational(x.gdpPerCap, d).text}`} />
-        )}
-        {d && x?.gdp != null && <Row label={`GDP (${d.gdpYear})`} value={fmtGdp(x.gdp, d.currency)} />}
+        {(() => {
+          const e = d && econOf(state, x, d);
+          if (!d || !e) return null;
+          return <>
+            {e.gdpPerCap != null && <Row label={`GDP per person (${d.gdpYear})`} value={`${d.currency}${e.gdpPerCap.toLocaleString()} — ${vsNational(e.gdpPerCap, d).text}`} />}
+            {e.gdp != null && <Row label={`GDP (${d.gdpYear})`} value={fmtGdp(e.gdp, d.currency)} />}
+          </>;
+        })()}
         {d && x && (
           <div style={{ margin: "10px 0 4px" }}>
             <LinkChips links={pieceLinks(state, x, d)} />

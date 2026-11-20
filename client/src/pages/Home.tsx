@@ -18,6 +18,27 @@ import { pathArea } from "@/lib/touch";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
+import { DetailsModal, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
+import { ENGLAND_DETAILS_BASE, ENGLAND_DETAILS_BY_NAME } from "@/lib/englandDetails";
+import type { MapConfig, MapPiece } from "@/lib/mapTypes";
+
+// England as a general map definition, so it can share the information panels with the other maps
+const ENGLAND_PIECES: MapPiece[] = RAW_AREAS.map(a => ({
+  id: a.id, name: a.name, abbr: a.name, path: "", cx: a.cx, cy: a.cy, colour: a.colour,
+  capital: AREA_INFO[a.name]?.town ?? "", region: AREA_INFO[a.name]?.region ?? "",
+  pop: AREA_STATS[a.name]?.pop ?? 0, area_km2: AREA_STATS[a.name]?.area_km2 ?? 1,
+}));
+const ENGLAND_CFG: MapConfig = {
+  key: "england", flag: "", title: "England", subtitle: "", noun: "area", typeLabel: "Area",
+  capitalLabel: "Principal town", popLabel: "Population (2021 census)", areaLabel: "Land area",
+  pieces: ENGLAND_PIECES, width: SVG_WIDTH, height: SVG_HEIGHT, regionColours: {}, labelAreaRange: [1, 1],
+  details: {
+    ...ENGLAND_DETAILS_BASE,
+    pieces: Object.fromEntries(RAW_AREAS.filter(a => ENGLAND_DETAILS_BY_NAME[a.name]).map(a => [a.id, {
+      ...ENGLAND_DETAILS_BY_NAME[a.name], type: AREA_INFO[a.name]?.type,
+    }])),
+  },
+};
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -96,7 +117,7 @@ function CompassRose() {
 
 // ─── Info Panel ───────────────────────────────────────────────────────────────
 
-function InfoPanel({ id, onClose }: { id: string; onClose: () => void }) {
+function InfoPanel({ id, onClose, onMore }: { id: string; onClose: () => void; onMore: () => void }) {
   const area = RAW_AREAS.find(a => a.id === id);
   if (!area) return null;
   const info  = AREA_INFO[area.name];
@@ -109,8 +130,9 @@ function InfoPanel({ id, onClose }: { id: string; onClose: () => void }) {
   }
 
   return (
-    <div style={{
-      position: "absolute", top: 60, right: 12, width: 240, zIndex: 500,
+    <div data-panel onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} style={{
+      position: "absolute", top: 60, right: 12, width: 280, zIndex: 500,
+      maxHeight: "calc(100% - 110px)", overflowY: "auto",
       background: "rgba(16,27,50,0.97)", border: "1px solid rgba(224,201,127,0.35)",
       borderRadius: 6, boxShadow: "0 8px 32px rgba(0,0,0,0.7)",
       fontFamily: "Inter, sans-serif",
@@ -151,6 +173,24 @@ function InfoPanel({ id, onClose }: { id: string; onClose: () => void }) {
               <Row label="Land area" value={stats.area_km2.toLocaleString() + " km²"} />
             </>
           )}
+          {(() => {
+            const d = ENGLAND_CFG.details!, x = d.pieces[area.id], p = ENGLAND_PIECES.find(q => q.id === area.id)!;
+            const e = econOf(p, x, d);
+            return <>
+              {e?.gdpPerCap != null && <Row label={`GDP per person, ${info.region} (${d.gdpYear})`} value={`£${e.gdpPerCap.toLocaleString()} — ${vsNational(e.gdpPerCap, d).text}`} />}
+              {e?.gdp != null && <Row label={`Region's GDP (${d.gdpYear})`} value={fmtGdp(e.gdp, d.currency)} />}
+              {x && (
+                <div style={{ margin: "10px 0 8px" }}>
+                  <LinkChips links={pieceLinks(p, x, d)} />
+                  <button onClick={onMore} style={{
+                    marginTop: 10, width: "100%", padding: "6px 0", borderRadius: 5, cursor: "pointer",
+                    background: "#0f3460", color: "#e0c97f", border: "1px solid rgba(224,201,127,0.4)",
+                    fontSize: "0.78rem", fontFamily: "Inter, sans-serif",
+                  }}>More details…</button>
+                </div>
+              )}
+            </>;
+          })()}
           <Row label="ONS code" value={area.id} mono />
         </div>
       )}
@@ -239,6 +279,7 @@ export default function Home() {
   const [snapEnabled,  setSnapEnabled]  = useState(true);
   const [snapMsg,    setSnapMsg]    = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [detailsId, setDetailsId] = useState<string | null>(null);
   const [tooltip,    setTooltip]    = useState<{ name: string; x: number; y: number } | null>(null);
   const [zOrder,     setZOrder]     = useState<string[]>(() => bySizeDescending(areas));
   const bboxes = useMemo(() => Object.fromEntries(areas.map(a => [a.id, pathBBox(a.path)])), [areas]);
@@ -543,6 +584,7 @@ export default function Home() {
     const el = canvasRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
+      if ((e.target as Element).closest?.("[data-panel]")) return; // let the info panel scroll
       e.preventDefault();
       const r = el.getBoundingClientRect();
       const mx = e.clientX - r.left;
@@ -855,7 +897,7 @@ export default function Home() {
 
         {/* Info panel — hidden during quiz */}
         {selectedId && !quiz.active && (
-          <InfoPanel id={selectedId} onClose={() => setSelectedId(null)} />
+          <InfoPanel id={selectedId} onClose={() => setSelectedId(null)} onMore={() => setDetailsId(selectedId)} />
         )}
 
         {/* Quiz results overlay */}
@@ -942,6 +984,11 @@ export default function Home() {
           onDrop={deckDrop} onRestart={restartDeck} onExit={exitDeck} />
       )}
       </div>
+
+      {detailsId && (() => {
+        const p = ENGLAND_PIECES.find(x => x.id === detailsId);
+        return p ? <DetailsModal piece={p} cfg={ENGLAND_CFG} onClose={() => setDetailsId(null)} /> : null;
+      })()}
 
       <style>{`
         @keyframes panelIn {

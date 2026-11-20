@@ -54,8 +54,11 @@ export interface MapDetails {
   currency: string;                          // "C$", "£", "$"
   gdpYear: number;
   gdpSource: string;
-  national: { label: string; gdp: number; gdpPerCap: number };
+  national: { label: string; gdp: number; gdpPerCap: number; totalLabel?: string }; // totalLabel: e.g. "Europe's total"
   searchSuffix?: string;                     // added to YouTube searches, e.g. "Canada"
-  news: { label: string; url: (q: string) => string };
+  news?: { label: string; url: (q: string) => string }; // default: BBC News search
   pieces: Record<string, PieceDetails>;
+  // When figures exist only for larger regions (England), each piece shows its region's figures
+  regional?: Record<string, { gdp: number; gdpPerCap: number }>;
+  econNote?: string;                         // shown under the economy figures
 }

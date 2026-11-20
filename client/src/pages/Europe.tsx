@@ -1,4 +1,5 @@
 import JigsawMap from "@/components/JigsawMap";
+import { EUROPE_DETAILS } from "@/lib/europeDetails";
 import type { MapConfig } from "@/lib/mapTypes";
 import { EUROPE, EUROPE_CONTEXT, SVG_HEIGHT, SVG_WIDTH } from "@/lib/europeData";
 
@@ -19,6 +20,7 @@ export const EUROPE_MAP: MapConfig = {
   regionColours: { "Northern": "#5b9bd5", "Western": "#4db8a0", "Southern": "#e07b54", "Eastern": "#8a7ecf", "Western Asia": "#c9a24a" },
   labelAreaRange: [300, 600000],
   context: EUROPE_CONTEXT,
+  details: EUROPE_DETAILS,
 };
 
 export default function Europe() {

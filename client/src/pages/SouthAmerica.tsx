@@ -1,4 +1,5 @@
 import JigsawMap from "@/components/JigsawMap";
+import { SOUTH_AMERICA_DETAILS } from "@/lib/southAmericaDetails";
 import type { MapConfig } from "@/lib/mapTypes";
 import { SOUTH_AMERICA, SOUTH_AMERICA_CONTEXT, SVG_HEIGHT, SVG_WIDTH } from "@/lib/southAmericaData";
 
@@ -18,6 +19,7 @@ export const SOUTH_AMERICA_MAP: MapConfig = {
   regionColours: { "Andean": "#e07b54", "Southern Cone": "#5b9bd5", "Guianas": "#4db8a0", "Brazil": "#8a7ecf" },
   labelAreaRange: [10000, 3000000],
   context: SOUTH_AMERICA_CONTEXT,
+  details: SOUTH_AMERICA_DETAILS,
 };
 
 export default function SouthAmerica() {

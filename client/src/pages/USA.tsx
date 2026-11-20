@@ -1,6 +1,7 @@
 import JigsawMap from "@/components/JigsawMap";
 import type { MapConfig } from "@/lib/mapTypes";
 import { US_STATES, SVG_HEIGHT, SVG_WIDTH } from "@/lib/usStatesData";
+import { USA_DETAILS } from "@/lib/usaDetails";
 
 export const USA_MAP: MapConfig = {
   key: "usa",
@@ -17,6 +18,7 @@ export const USA_MAP: MapConfig = {
   height: SVG_HEIGHT,
   regionColours: { "Northeast": "#5b9bd5", "Midwest": "#4db8a0", "South": "#e07b54", "West": "#8a7ecf" },
   labelAreaRange: [4000, 700000],
+  details: USA_DETAILS,
 };
 
 export default function USA() {
