@@ -1,0 +1,38 @@
+{
+ "info": "wales-info.json",
+ "admin1": "X-Wales",
+ "exportName": "WALES",
+ "comment": "Natural Earth 1:10m; Lambert azimuthal equal-area centred on Wales",
+ "rotate": [
+  3.9,
+  -52.4
+ ],
+ "window": [
+  -5.8,
+  -2.6,
+  51.3,
+  53.5
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {},
+ "labelAt": {},
+ "contextBox": [
+  -15,
+  5,
+  48,
+  63
+ ],
+ "spreadShades": true,
+ "shades": {
+  "Wales": [
+   "#c05a34",
+   "#1d8a70",
+   "#5a4e9f",
+   "#e07a54",
+   "#5dc4aa",
+   "#8a7ecf",
+   "#b8923a"
+  ]
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "info": "scotland-info.json",
+ "admin1": "X-Scotland",
+ "exportName": "SCOTLAND",
+ "comment": "Natural Earth 1:10m; Lambert azimuthal equal-area centred on Scotland",
+ "rotate": [
+  4,
+  -57
+ ],
+ "window": [
+  -9,
+  0,
+  54.5,
+  61.2
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {},
+ "labelAt": {},
+ "contextBox": [
+  -15,
+  5,
+  48,
+  63
+ ],
+ "spreadShades": true,
+ "shades": {
+  "Scotland": [
+   "#3a7abf",
+   "#1d8a70",
+   "#5a4e9f",
+   "#6aaae0",
+   "#5dc4aa",
+   "#8a7ecf",
+   "#c05a34"
+  ]
+ }
+}

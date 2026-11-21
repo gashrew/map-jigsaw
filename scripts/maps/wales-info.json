@@ -1,0 +1,200 @@
+{
+ "Anglesey": [
+  "AGY",
+  "Llangefni",
+  "Wales",
+  69000,
+  711,
+  "Isle of Anglesey",
+  null
+ ],
+ "Blaenau Gwent": [
+  "BGW",
+  "Ebbw Vale",
+  "Wales",
+  67000,
+  109,
+  null,
+  null
+ ],
+ "Bridgend": [
+  "BGE",
+  "Bridgend",
+  "Wales",
+  147000,
+  251,
+  null,
+  null
+ ],
+ "Caerphilly": [
+  "CAY",
+  "Ystrad Mynach",
+  "Wales",
+  176000,
+  277,
+  null,
+  null
+ ],
+ "Cardiff": [
+  "CRF",
+  "Cardiff",
+  "Wales",
+  372000,
+  141,
+  null,
+  null
+ ],
+ "Carmarthenshire": [
+  "CMN",
+  "Carmarthen",
+  "Wales",
+  189000,
+  2370,
+  null,
+  null
+ ],
+ "Ceredigion": [
+  "CGN",
+  "Aberaeron",
+  "Wales",
+  71000,
+  1786,
+  null,
+  null
+ ],
+ "Conwy": [
+  "CWY",
+  "Conwy",
+  "Wales",
+  114000,
+  1126,
+  null,
+  null
+ ],
+ "Denbighshire": [
+  "DEN",
+  "Ruthin",
+  "Wales",
+  96000,
+  837,
+  null,
+  null
+ ],
+ "Flintshire": [
+  "FLN",
+  "Mold",
+  "Wales",
+  155000,
+  438,
+  null,
+  null
+ ],
+ "Gwynedd": [
+  "GWN",
+  "Caernarfon",
+  "Wales",
+  118000,
+  2535,
+  null,
+  null
+ ],
+ "Merthyr Tydfil": [
+  "MTY",
+  "Merthyr Tydfil",
+  "Wales",
+  59000,
+  111,
+  null,
+  null
+ ],
+ "Monmouthshire": [
+  "MON",
+  "Usk",
+  "Wales",
+  94000,
+  849,
+  null,
+  null
+ ],
+ "Neath Port Talbot": [
+  "NTL",
+  "Port Talbot",
+  "Wales",
+  142000,
+  442,
+  null,
+  null
+ ],
+ "Newport": [
+  "NWP",
+  "Newport",
+  "Wales",
+  162000,
+  190,
+  null,
+  null
+ ],
+ "Pembrokeshire": [
+  "PEM",
+  "Haverfordwest",
+  "Wales",
+  124000,
+  1619,
+  null,
+  null
+ ],
+ "Powys": [
+  "POW",
+  "Llandrindod Wells",
+  "Wales",
+  134000,
+  5181,
+  null,
+  null
+ ],
+ "Rhondda, Cynon, Taff": [
+  "RCT",
+  "Pontypridd",
+  "Wales",
+  238000,
+  424,
+  "Rhondda Cynon Taf",
+  null
+ ],
+ "Swansea": [
+  "SWA",
+  "Swansea",
+  "Wales",
+  241000,
+  380,
+  null,
+  null
+ ],
+ "Torfaen": [
+  "TOF",
+  "Pontypool",
+  "Wales",
+  93000,
+  126,
+  null,
+  null
+ ],
+ "Vale of Glamorgan": [
+  "VGL",
+  "Barry",
+  "Wales",
+  133000,
+  331,
+  null,
+  null
+ ],
+ "Wrexham": [
+  "WRX",
+  "Wrexham",
+  "Wales",
+  135000,
+  504,
+  null,
+  null
+ ]
+}

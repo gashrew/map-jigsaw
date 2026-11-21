@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView, type ViewState as TouchView } from "@/lib/touch";
 import { pathArea } from "@/lib/touch";
 import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
+import { useGhostClickGuard } from "@/components/useGhostClickGuard";
 import { DetailsModal, Flag, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
@@ -63,6 +64,7 @@ function RegionLegend({ colours }: { colours: Record<string, string> }) {
 
 // ─── Info Panel ───────────────────────────────────────────────────────────────
 function InfoPanel({ id, cfg, onClose, onMore }: { id: string; cfg: MapConfig; onClose: () => void; onMore: () => void }) {
+  const guard = useGhostClickGuard(id);
   const state = cfg.pieces.find(s => s.id === id);
   if (!state) return null;
   const d = cfg.details, x = d?.pieces[id];
@@ -74,7 +76,7 @@ function InfoPanel({ id, cfg, onClose, onMore }: { id: string; cfg: MapConfig; o
   }
 
   return (
-    <div data-panel onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} style={{
+    <div data-panel onClickCapture={guard} onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} style={{
       position: "absolute", top: 60, right: 12, width: x ? 280 : 240, zIndex: 500,
       maxHeight: "calc(100% - 110px)", overflowY: "auto",
       background: "rgba(16,27,50,0.97)", border: "1px solid rgba(224,201,127,0.35)",

@@ -1,0 +1,73 @@
+{
+ "info": "northern-ireland-info.json",
+ "admin1": "X-Northern Ireland",
+ "exportName": "NORTHERN_IRELAND",
+ "comment": "Natural Earth 1:10m; Lambert azimuthal equal-area centred on Northern Ireland",
+ "rotate": [
+  6.7,
+  -54.6
+ ],
+ "window": [
+  -8.3,
+  -5.3,
+  53.9,
+  55.4
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {
+  "Antrim": [
+   "Newtownabbey"
+  ],
+  "Ards": [
+   "North Down"
+  ],
+  "Armagh": [
+   "Banbridge",
+   "Craigavon"
+  ],
+  "Coleraine": [
+   "Ballymoney",
+   "Limavady",
+   "Moyle"
+  ],
+  "Derry": [
+   "Strabane"
+  ],
+  "Fermanagh": [
+   "Omagh"
+  ],
+  "Lisburn": [
+   "Castlereagh"
+  ],
+  "Ballymena": [
+   "Carrickfergus",
+   "Larne"
+  ],
+  "Mid Ulster": [
+   "Dungannon",
+   "Magherafelt"
+  ],
+  "Newry and Mourne": [
+   "Down"
+  ]
+ },
+ "labelAt": {},
+ "contextBox": [
+  -15,
+  5,
+  48,
+  63
+ ],
+ "spreadShades": true,
+ "shades": {
+  "Northern Ireland": [
+   "#1d8a70",
+   "#3a7abf",
+   "#5a4e9f",
+   "#c05a34",
+   "#5dc4aa",
+   "#b8923a"
+  ]
+ }
+}

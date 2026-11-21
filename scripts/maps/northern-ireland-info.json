@@ -1,0 +1,101 @@
+{
+ "Antrim": [
+  "ANN",
+  "Antrim",
+  "Northern Ireland",
+  145000,
+  572,
+  "Antrim and Newtownabbey",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Ards": [
+  "AND",
+  "Bangor",
+  "Northern Ireland",
+  165000,
+  457,
+  "Ards and North Down",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Armagh": [
+  "ABC",
+  "Craigavon",
+  "Northern Ireland",
+  222000,
+  1327,
+  "Armagh City, Banbridge and Craigavon",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Belfast": [
+  "BFS",
+  "Belfast",
+  "Northern Ireland",
+  348000,
+  133,
+  null,
+  null
+ ],
+ "Coleraine": [
+  "CCG",
+  "Coleraine",
+  "Northern Ireland",
+  142000,
+  1980,
+  "Causeway Coast and Glens",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Derry": [
+  "DRS",
+  "Derry",
+  "Northern Ireland",
+  151000,
+  1238,
+  "Derry City and Strabane",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Fermanagh": [
+  "FMO",
+  "Enniskillen",
+  "Northern Ireland",
+  118000,
+  2830,
+  "Fermanagh and Omagh",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Lisburn": [
+  "LBC",
+  "Lisburn",
+  "Northern Ireland",
+  152000,
+  503,
+  "Lisburn and Castlereagh",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Ballymena": [
+  "MEA",
+  "Ballymena",
+  "Northern Ireland",
+  141000,
+  1045,
+  "Mid and East Antrim",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Mid Ulster": [
+  "MUL",
+  "Dungannon",
+  "Northern Ireland",
+  152000,
+  1826,
+  null,
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ],
+ "Newry and Mourne": [
+  "NMD",
+  "Newry",
+  "Northern Ireland",
+  183000,
+  1628,
+  "Newry, Mourne and Down",
+  "Formed in 2015 by merging former districts; the boundaries shown are the older ones combined, which differ slightly in places"
+ ]
+}

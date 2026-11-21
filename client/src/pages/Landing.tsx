@@ -22,6 +22,9 @@ import { CENTRAL_EAST_AFRICA, CENTRAL_EAST_AFRICA_CONTEXT, SVG_WIDTH as CENTRAL_
 import { SOUTHERN_AFRICA, SOUTHERN_AFRICA_CONTEXT, SVG_WIDTH as SOUTHERN_AFRICA_W, SVG_HEIGHT as SOUTHERN_AFRICA_H } from "@/lib/southernAfricaData";
 import { CENTRAL_AMERICA, CENTRAL_AMERICA_CONTEXT, SVG_WIDTH as CENTRAL_AMERICA_W, SVG_HEIGHT as CENTRAL_AMERICA_H } from "@/lib/centralAmericaData";
 import { CARIBBEAN, CARIBBEAN_CONTEXT, SVG_WIDTH as CARIBBEAN_W, SVG_HEIGHT as CARIBBEAN_H } from "@/lib/caribbeanData";
+import { SCOTLAND, SCOTLAND_CONTEXT, SVG_WIDTH as SCOTLAND_W, SVG_HEIGHT as SCOTLAND_H } from "@/lib/scotlandData";
+import { WALES, WALES_CONTEXT, SVG_WIDTH as WALES_W, SVG_HEIGHT as WALES_H } from "@/lib/walesData";
+import { NORTHERN_IRELAND, NORTHERN_IRELAND_CONTEXT, SVG_WIDTH as NORTHERN_IRELAND_W, SVG_HEIGHT as NORTHERN_IRELAND_H } from "@/lib/northernIrelandData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -327,6 +330,57 @@ function CaribbeanMini() {
         {CARIBBEAN_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {CARIBBEAN.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function ScotlandMini() {
+  const W = 180, H = 200;
+  const sc = Math.min(W / SCOTLAND_W, H / SCOTLAND_H) * 0.95;
+  const ox = (W - SCOTLAND_W * sc) / 2;
+  const oy = (H - SCOTLAND_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {SCOTLAND_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {SCOTLAND.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="2" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function WalesMini() {
+  const W = 180, H = 200;
+  const sc = Math.min(W / WALES_W, H / WALES_H) * 0.95;
+  const ox = (W - WALES_W * sc) / 2;
+  const oy = (H - WALES_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {WALES_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {WALES.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="2" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function NorthernIrelandMini() {
+  const W = 180, H = 200;
+  const sc = Math.min(W / NORTHERN_IRELAND_W, H / NORTHERN_IRELAND_H) * 0.95;
+  const ox = (W - NORTHERN_IRELAND_W * sc) / 2;
+  const oy = (H - NORTHERN_IRELAND_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {NORTHERN_IRELAND_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {NORTHERN_IRELAND.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="2" fillRule="evenodd" />
         ))}
       </g>
     </svg>
@@ -685,19 +739,37 @@ export default function Landing() {
           available={true}
         />
         <MapCard
-          href="/coming-soon"
+          href="/scotland"
           flag="🏴󠁧󠁢󠁳󠁣󠁴󠁿"
           title="Scotland"
-          subtitle="Council areas"
-          count={32}
-          unit="areas"
-          features={["Council areas", "Region colours", "Quiz mode"]}
-          preview={
-            <div style={{ width: 160, height: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontSize: "4rem", opacity: 0.3 }}>🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
-            </div>
-          }
-          available={false}
+          subtitle="Natural Earth boundary data"
+          count={SCOTLAND.length}
+          unit="council areas"
+          features={["32 council areas", "Gaelic names", "Admin centres", "Quiz mode"]}
+          preview={<ScotlandMini />}
+          available={true}
+        />
+        <MapCard
+          href="/wales"
+          flag="🏴󠁧󠁢󠁷󠁬󠁳󠁿"
+          title="Wales"
+          subtitle="Natural Earth boundary data"
+          count={WALES.length}
+          unit="principal areas"
+          features={["22 principal areas", "Welsh names", "Admin centres", "Quiz mode"]}
+          preview={<WalesMini />}
+          available={true}
+        />
+        <MapCard
+          href="/northern-ireland"
+          flag="🇬🇧"
+          title="Northern Ireland"
+          subtitle="Natural Earth boundary data"
+          count={NORTHERN_IRELAND.length}
+          unit="districts"
+          features={["11 districts", "Admin centres", "Facts and links", "Quiz mode"]}
+          preview={<NorthernIrelandMini />}
+          available={true}
         />
       </div>
 

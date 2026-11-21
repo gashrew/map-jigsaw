@@ -14,6 +14,9 @@ import SouthAmerica from "./pages/SouthAmerica";
 import Canada from "./pages/Canada";
 import MiddleEast from "./pages/MiddleEast";
 import India from "./pages/India";
+import NorthernIreland from "./pages/NorthernIreland";
+import Wales from "./pages/Wales";
+import Scotland from "./pages/Scotland";
 import Caribbean from "./pages/Caribbean";
 import CentralAmerica from "./pages/CentralAmerica";
 import SouthernAfrica from "./pages/SouthernAfrica";
@@ -37,6 +40,9 @@ function Router() {
       <Route path="/canada" component={Canada} />
       <Route path="/middle-east" component={MiddleEast} />
       <Route path="/india" component={India} />
+      <Route path="/northern-ireland" component={NorthernIreland} />
+      <Route path="/wales" component={Wales} />
+      <Route path="/scotland" component={Scotland} />
       <Route path="/caribbean" component={Caribbean} />
       <Route path="/central-america" component={CentralAmerica} />
       <Route path="/southern-africa" component={SouthernAfrica} />

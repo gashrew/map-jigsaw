@@ -10,8 +10,11 @@ import { Link, useLocation } from "wouter";
 interface MapEntry { path: string; label: string; flag: string; subtitle: string; }
 
 export const MAP_GROUPS: { title: string; maps: MapEntry[] }[] = [
-  { title: "Britain", maps: [
+  { title: "United Kingdom", maps: [
     { path: "/england", label: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", subtitle: "90 areas" },
+    { path: "/scotland", label: "Scotland", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", subtitle: "32 council areas" },
+    { path: "/wales", label: "Wales", flag: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", subtitle: "22 principal areas" },
+    { path: "/northern-ireland", label: "Northern Ireland", flag: "🇬🇧", subtitle: "11 districts" },
   ] },
   { title: "Americas", maps: [
     { path: "/usa", label: "USA", flag: "🇺🇸", subtitle: "51 states" },

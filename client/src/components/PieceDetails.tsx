@@ -29,7 +29,9 @@ const BBC = { label: "BBC News", url: (q: string) => `https://www.bbc.co.uk/sear
 export function econOf(p: MapPiece, x: PieceDetails | undefined, d: MapDetails) {
   if (d.regional) {
     const r = d.regional[p.region];
-    return r ? { gdp: r.gdp, gdpPerCap: r.gdpPerCap, scope: `${p.region} region` } : null;
+    // "the North West region", but "Scotland" for a whole nation
+    const nation = ["England", "Scotland", "Wales", "Northern Ireland"].includes(p.region);
+    return r ? { gdp: r.gdp, gdpPerCap: r.gdpPerCap, scope: nation ? p.region : `the ${p.region} region` } : null;
   }
   return x && (x.gdp != null || x.gdpPerCap != null) ? { gdp: x.gdp, gdpPerCap: x.gdpPerCap, scope: "" } : null;
 }
@@ -133,10 +135,10 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
 
             {/* Economy */}
             <Section title={`Economy (${d.gdpYear})`}>
-              {econ?.scope && <div style={{ fontSize: "0.75rem", color: "#8899aa", marginBottom: 8 }}>Figures are for the whole {econ.scope}; they are not published for each area here.</div>}
-              {econ?.gdp != null && <Fact label={econ.scope ? `GDP of the ${econ.scope}` : "GDP"} value={`${fmtGdp(econ.gdp, d.currency)} — ${((econ.gdp / d.national.gdp) * 100).toFixed(1)}% of ${d.national.totalLabel ?? d.national.label}`} />}
+              {econ?.scope && <div style={{ fontSize: "0.75rem", color: "#8899aa", marginBottom: 8 }}>Figures are for {econ.scope.startsWith("the ") ? "the whole " + econ.scope.slice(4) : "the whole of " + econ.scope}; they are not published for each area here.</div>}
+              {econ?.gdp != null && <Fact label={econ.scope ? `GDP of ${econ.scope}` : "GDP"} value={`${fmtGdp(econ.gdp, d.currency)} — ${((econ.gdp / d.national.gdp) * 100).toFixed(1)}% of ${d.national.totalLabel ?? d.national.label}`} />}
               {econ?.gdpPerCap != null && (
-                <Fact label={econ.scope ? `GDP per person in the ${econ.scope}` : "GDP per person"} value={`${d.currency}${econ.gdpPerCap.toLocaleString()} — ${vsNational(econ.gdpPerCap, d).text} (${d.currency}${d.national.gdpPerCap.toLocaleString()})${rank ? `, ${ordinal(rank)} of ${ranked.length}` : ""}`} />
+                <Fact label={econ.scope ? `GDP per person in ${econ.scope}` : "GDP per person"} value={`${d.currency}${econ.gdpPerCap.toLocaleString()} — ${vsNational(econ.gdpPerCap, d).text} (${d.currency}${d.national.gdpPerCap.toLocaleString()})${rank ? `, ${ordinal(rank)} of ${ranked.length}` : ""}`} />
               )}
               {!econ && <div style={{ fontSize: "0.8rem", color: "#8899aa", marginBottom: 8 }}>No separate economic figures are published for {piece.name}.</div>}
               {d.econNote && <div style={{ fontSize: "0.7rem", color: "#8899aa", marginBottom: 8, fontStyle: "italic" }}>{d.econNote}</div>}

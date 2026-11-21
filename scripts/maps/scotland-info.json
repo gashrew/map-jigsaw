@@ -1,0 +1,290 @@
+{
+ "Aberdeen": [
+  "ABE",
+  "Aberdeen",
+  "Scotland",
+  227000,
+  186,
+  "Aberdeen City",
+  null
+ ],
+ "Aberdeenshire": [
+  "ABD",
+  "Inverurie",
+  "Scotland",
+  263000,
+  6313,
+  null,
+  null
+ ],
+ "Angus": [
+  "ANS",
+  "Forfar",
+  "Scotland",
+  115000,
+  2182,
+  null,
+  null
+ ],
+ "Argyll and Bute": [
+  "AGB",
+  "Lochgilphead",
+  "Scotland",
+  86000,
+  6909,
+  null,
+  null
+ ],
+ "Clackmannanshire": [
+  "CLK",
+  "Alloa",
+  "Scotland",
+  52000,
+  159,
+  null,
+  null
+ ],
+ "Dumfries and Galloway": [
+  "DGY",
+  "Dumfries",
+  "Scotland",
+  145000,
+  6426,
+  null,
+  null
+ ],
+ "Dundee": [
+  "DND",
+  "Dundee",
+  "Scotland",
+  148000,
+  60,
+  "Dundee City",
+  null
+ ],
+ "East Ayrshire": [
+  "EAY",
+  "Kilmarnock",
+  "Scotland",
+  121000,
+  1262,
+  null,
+  null
+ ],
+ "East Dunbartonshire": [
+  "EDU",
+  "Kirkintilloch",
+  "Scotland",
+  109000,
+  175,
+  null,
+  null
+ ],
+ "East Lothian": [
+  "ELN",
+  "Haddington",
+  "Scotland",
+  112000,
+  679,
+  null,
+  null
+ ],
+ "East Renfrewshire": [
+  "ERW",
+  "Giffnock",
+  "Scotland",
+  97000,
+  174,
+  null,
+  null
+ ],
+ "Edinburgh": [
+  "EDH",
+  "Edinburgh",
+  "Scotland",
+  515000,
+  264,
+  "City of Edinburgh",
+  null
+ ],
+ "Eilean Siar": [
+  "ELS",
+  "Stornoway",
+  "Scotland",
+  26000,
+  3059,
+  "Na h-Eileanan Siar (Western Isles)",
+  null
+ ],
+ "Falkirk": [
+  "FAL",
+  "Falkirk",
+  "Scotland",
+  158000,
+  297,
+  null,
+  null
+ ],
+ "Fife": [
+  "FIF",
+  "Glenrothes",
+  "Scotland",
+  372000,
+  1325,
+  null,
+  null
+ ],
+ "Glasgow": [
+  "GLG",
+  "Glasgow",
+  "Scotland",
+  623000,
+  175,
+  "Glasgow City",
+  null
+ ],
+ "Highland": [
+  "HLD",
+  "Inverness",
+  "Scotland",
+  235000,
+  25657,
+  null,
+  null
+ ],
+ "Inverclyde": [
+  "IVC",
+  "Greenock",
+  "Scotland",
+  78000,
+  160,
+  null,
+  null
+ ],
+ "Midlothian": [
+  "MLN",
+  "Dalkeith",
+  "Scotland",
+  96000,
+  354,
+  null,
+  null
+ ],
+ "Moray": [
+  "MRY",
+  "Elgin",
+  "Scotland",
+  94000,
+  2238,
+  null,
+  null
+ ],
+ "North Ayshire": [
+  "NAY",
+  "Irvine",
+  "Scotland",
+  133000,
+  885,
+  "North Ayrshire",
+  null
+ ],
+ "North Lanarkshire": [
+  "NLK",
+  "Motherwell",
+  "Scotland",
+  341000,
+  470,
+  null,
+  null
+ ],
+ "Orkney": [
+  "ORK",
+  "Kirkwall",
+  "Scotland",
+  22000,
+  990,
+  "Orkney Islands",
+  null
+ ],
+ "Perthshire and Kinross": [
+  "PKN",
+  "Perth",
+  "Scotland",
+  153000,
+  5286,
+  "Perth and Kinross",
+  null
+ ],
+ "Renfrewshire": [
+  "RFW",
+  "Paisley",
+  "Scotland",
+  184000,
+  261,
+  null,
+  null
+ ],
+ "Scottish Borders": [
+  "SCB",
+  "Newtown St Boswells",
+  "Scotland",
+  116000,
+  4732,
+  null,
+  null
+ ],
+ "Shetland Islands": [
+  "ZET",
+  "Lerwick",
+  "Scotland",
+  23000,
+  1468,
+  null,
+  null
+ ],
+ "South Ayrshire": [
+  "SAY",
+  "Ayr",
+  "Scotland",
+  112000,
+  1222,
+  null,
+  null
+ ],
+ "South Lanarkshire": [
+  "SLK",
+  "Hamilton",
+  "Scotland",
+  331000,
+  1772,
+  null,
+  null
+ ],
+ "Stirling": [
+  "STG",
+  "Stirling",
+  "Scotland",
+  92000,
+  2187,
+  null,
+  null
+ ],
+ "West Dunbartonshire": [
+  "WDU",
+  "Dumbarton",
+  "Scotland",
+  88000,
+  159,
+  null,
+  null
+ ],
+ "West Lothian": [
+  "WLN",
+  "Livingston",
+  "Scotland",
+  181000,
+  427,
+  null,
+  null
+ ]
+}

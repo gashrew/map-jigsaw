@@ -18,6 +18,7 @@ import { pathArea } from "@/lib/touch";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
+import { useGhostClickGuard } from "@/components/useGhostClickGuard";
 import { DetailsModal, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
 import { ENGLAND_DETAILS_BASE, ENGLAND_DETAILS_BY_NAME } from "@/lib/englandDetails";
 import type { MapConfig, MapPiece } from "@/lib/mapTypes";
@@ -118,6 +119,7 @@ function CompassRose() {
 // ─── Info Panel ───────────────────────────────────────────────────────────────
 
 function InfoPanel({ id, onClose, onMore }: { id: string; onClose: () => void; onMore: () => void }) {
+  const guard = useGhostClickGuard(id);
   const area = RAW_AREAS.find(a => a.id === id);
   if (!area) return null;
   const info  = AREA_INFO[area.name];
@@ -130,7 +132,7 @@ function InfoPanel({ id, onClose, onMore }: { id: string; onClose: () => void; o
   }
 
   return (
-    <div data-panel onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} style={{
+    <div data-panel onClickCapture={guard} onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} style={{
       position: "absolute", top: 60, right: 12, width: 280, zIndex: 500,
       maxHeight: "calc(100% - 110px)", overflowY: "auto",
       background: "rgba(16,27,50,0.97)", border: "1px solid rgba(224,201,127,0.35)",
