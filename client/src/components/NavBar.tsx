@@ -28,6 +28,10 @@ export const MAP_GROUPS: { title: string; maps: MapEntry[] }[] = [
     { path: "/southeast-asia", label: "Southeast Asia", flag: "🌏", subtitle: "11 countries" },
     { path: "/india", label: "India", flag: "🇮🇳", subtitle: "36 states and territories" },
   ] },
+  { title: "Australasia", maps: [
+    { path: "/australia", label: "Australia", flag: "🇦🇺", subtitle: "8 states and territories" },
+    { path: "/new-zealand", label: "New Zealand", flag: "🇳🇿", subtitle: "16 regions" },
+  ] },
 ];
 
 const GOLD = "#e0c97f";

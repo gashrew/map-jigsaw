@@ -1,0 +1,8 @@
+{
+  "info": "new-zealand-info.json", "admin1": "New Zealand", "exportName": "NEW_ZEALAND",
+  "comment": "Lambert azimuthal equal-area centred on 173°E 41°S",
+  "rotate": [-173, 41], "window": [165, 179, -48, -34],
+  "keepAll": [], "frameExclude": [], "merge": {}, "labelAt": {},
+  "contextBox": [150, 190, -55, -25],
+  "shades": { "North Island": ["#3a7abf", "#6aaae0", "#4a8fd4", "#8abce8", "#2a6aaf", "#5a9ad0"], "South Island": ["#1d8a70", "#3daa90", "#5dc4aa", "#0d7a60", "#7dd4ba"] }
+}

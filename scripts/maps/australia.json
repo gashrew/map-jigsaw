@@ -1,0 +1,8 @@
+{
+  "info": "australia-info.json", "admin1": "Australia", "exportName": "AUSTRALIA",
+  "comment": "Lambert conformal conic, standard parallels 18°S and 36°S (as Geoscience Australia)",
+  "parallels": [-18, -36], "rotate": [-134, 0], "window": [112, 154.5, -44, -9],
+  "keepAll": [], "frameExclude": [], "merge": { "Australian Capital Territory": ["Jervis Bay Territory"] }, "labelAt": {},
+  "contextBox": [100, 180, -50, 0],
+  "shades": { "East": ["#3a7abf", "#6aaae0", "#1d8a70", "#5dc4aa", "#4a8fd4"], "Centre and West": ["#c05a34", "#e07a54", "#b8923a"] }
+}

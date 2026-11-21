@@ -14,6 +14,8 @@ import { EAST_ASIA, EAST_ASIA_CONTEXT, SVG_WIDTH as EAST_ASIA_W, SVG_HEIGHT as E
 import { SOUTH_CENTRAL_ASIA, SOUTH_CENTRAL_ASIA_CONTEXT, SVG_WIDTH as SOUTH_CENTRAL_ASIA_W, SVG_HEIGHT as SOUTH_CENTRAL_ASIA_H } from "@/lib/southCentralAsiaData";
 import { SOUTHEAST_ASIA, SOUTHEAST_ASIA_CONTEXT, SVG_WIDTH as SOUTHEAST_ASIA_W, SVG_HEIGHT as SOUTHEAST_ASIA_H } from "@/lib/southeastAsiaData";
 import { INDIA, INDIA_CONTEXT, SVG_WIDTH as IN_W, SVG_HEIGHT as IN_H } from "@/lib/indiaData";
+import { AUSTRALIA, AUSTRALIA_CONTEXT, SVG_WIDTH as AUSTRALIA_W, SVG_HEIGHT as AUSTRALIA_H } from "@/lib/australiaData";
+import { NEW_ZEALAND, NEW_ZEALAND_CONTEXT, SVG_WIDTH as NEW_ZEALAND_W, SVG_HEIGHT as NEW_ZEALAND_H } from "@/lib/newZealandData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -183,6 +185,40 @@ function IndiaMini() {
         {INDIA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {INDIA.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function AustraliaMini() {
+  const W = 200, H = 190;
+  const sc = Math.min(W / AUSTRALIA_W, H / AUSTRALIA_H) * 0.95;
+  const ox = (W - AUSTRALIA_W * sc) / 2;
+  const oy = (H - AUSTRALIA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {AUSTRALIA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {AUSTRALIA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="2" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function NewZealandMini() {
+  const W = 200, H = 190;
+  const sc = Math.min(W / NEW_ZEALAND_W, H / NEW_ZEALAND_H) * 0.95;
+  const ox = (W - NEW_ZEALAND_W * sc) / 2;
+  const oy = (H - NEW_ZEALAND_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {NEW_ZEALAND_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {NEW_ZEALAND.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="2" fillRule="evenodd" />
         ))}
       </g>
     </svg>
@@ -450,6 +486,28 @@ export default function Landing() {
           unit="states and territories"
           features={["28 states + 8 union territories", "Region colours", "Capitals", "State GDP (MoSPI)", "Quiz mode"]}
           preview={<IndiaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/australia"
+          flag="🇦🇺"
+          title="Australia"
+          subtitle="Natural Earth boundary data"
+          count={AUSTRALIA.length}
+          unit="states and territories"
+          features={["6 states + 2 territories", "Capitals", "ABS state GDP", "Quiz mode"]}
+          preview={<AustraliaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/new-zealand"
+          flag="🇳🇿"
+          title="New Zealand"
+          subtitle="Natural Earth boundary data"
+          count={NEW_ZEALAND.length}
+          unit="regions"
+          features={["16 regions", "Māori names", "Stats NZ regional GDP", "Quiz mode"]}
+          preview={<NewZealandMini />}
           available={true}
         />
         <MapCard

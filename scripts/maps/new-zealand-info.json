@@ -1,0 +1,146 @@
+{
+ "Northland": [
+  "NTL",
+  "Whangārei",
+  "North Island",
+  201000,
+  12504,
+  null,
+  null
+ ],
+ "Auckland": [
+  "AUK",
+  "Auckland",
+  "North Island",
+  1807000,
+  4941,
+  null,
+  null
+ ],
+ "Waikato": [
+  "WKO",
+  "Hamilton",
+  "North Island",
+  530000,
+  23900,
+  null,
+  null
+ ],
+ "Bay of Plenty": [
+  "BOP",
+  "Tauranga",
+  "North Island",
+  351000,
+  12072,
+  null,
+  null
+ ],
+ "Gisborne District": [
+  "GIS",
+  "Gisborne",
+  "North Island",
+  53000,
+  8385,
+  "Gisborne",
+  null
+ ],
+ "Hawke's Bay": [
+  "HKB",
+  "Napier",
+  "North Island",
+  180000,
+  14138,
+  null,
+  null
+ ],
+ "Taranaki": [
+  "TKI",
+  "New Plymouth",
+  "North Island",
+  130000,
+  7254,
+  null,
+  null
+ ],
+ "Manawatu-Wanganui": [
+  "MWT",
+  "Palmerston North",
+  "North Island",
+  260000,
+  22221,
+  "Manawatū-Whanganui",
+  null
+ ],
+ "Wellington": [
+  "WGN",
+  "Wellington",
+  "North Island",
+  543000,
+  8049,
+  null,
+  null
+ ],
+ "Tasman District": [
+  "TAS",
+  "Richmond",
+  "South Island",
+  60000,
+  9616,
+  "Tasman",
+  "Stats NZ publishes Nelson and Tasman's economic figures together; population is approximate"
+ ],
+ "Nelson City": [
+  "NSN",
+  "Nelson",
+  "South Island",
+  55000,
+  422,
+  "Nelson",
+  "Stats NZ publishes Nelson and Tasman's economic figures together; population is approximate"
+ ],
+ "Marlborough District": [
+  "MBH",
+  "Blenheim",
+  "South Island",
+  51000,
+  10458,
+  "Marlborough",
+  null
+ ],
+ "West Coast": [
+  "WTC",
+  "Greymouth",
+  "South Island",
+  35000,
+  23245,
+  null,
+  null
+ ],
+ "Canterbury": [
+  "CAN",
+  "Christchurch",
+  "South Island",
+  695000,
+  44633,
+  null,
+  null
+ ],
+ "Otago": [
+  "OTA",
+  "Dunedin",
+  "South Island",
+  253000,
+  31186,
+  null,
+  null
+ ],
+ "Southland": [
+  "STL",
+  "Invercargill",
+  "South Island",
+  105000,
+  31195,
+  null,
+  null
+ ]
+}

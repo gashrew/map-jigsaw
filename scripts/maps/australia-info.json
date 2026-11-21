@@ -1,0 +1,74 @@
+{
+ "New South Wales": [
+  "NSW",
+  "Sydney",
+  "East",
+  8594000,
+  800642,
+  null,
+  null
+ ],
+ "Victoria": [
+  "VIC",
+  "Melbourne",
+  "East",
+  7075000,
+  227416,
+  null,
+  null
+ ],
+ "Queensland": [
+  "QLD",
+  "Brisbane",
+  "East",
+  5670000,
+  1730648,
+  null,
+  null
+ ],
+ "Western Australia": [
+  "WA",
+  "Perth",
+  "Centre and West",
+  3044000,
+  2529875,
+  null,
+  null
+ ],
+ "South Australia": [
+  "SA",
+  "Adelaide",
+  "Centre and West",
+  1903000,
+  983482,
+  null,
+  null
+ ],
+ "Tasmania": [
+  "TAS",
+  "Hobart",
+  "East",
+  576000,
+  68401,
+  null,
+  null
+ ],
+ "Northern Territory": [
+  "NT",
+  "Darwin",
+  "Centre and West",
+  264000,
+  1349129,
+  null,
+  null
+ ],
+ "Australian Capital Territory": [
+  "ACT",
+  "Canberra",
+  "East",
+  485000,
+  2358,
+  null,
+  "The small Jervis Bay Territory on the New South Wales coast, a separate Commonwealth territory, is included with the ACT on this map"
+ ]
+}
