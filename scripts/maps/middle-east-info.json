@@ -1,0 +1,19 @@
+{
+ "Bahrain": ["BH","Manama","Arabian Peninsula",1600000,786],
+ "Cyprus": ["CY","Nicosia","Levant",930000,9251,null,"Population of the government-controlled area"],
+ "Egypt": ["EG","Cairo","North Africa",107300000,1002450],
+ "Iran": ["IR","Tehran","Iraq and Iran",91000000,1648195],
+ "Iraq": ["IQ","Baghdad","Iraq and Iran",46100000,438317],
+ "Israel": ["IL","Jerusalem",  "Levant",10000000,22072,null,"Israel's government sits in Jerusalem, but most countries keep their embassies in Tel Aviv because the city's status is disputed"],
+ "Jordan": ["JO","Amman","Levant",11700000,89342],
+ "Kuwait": ["KW","Kuwait City","Arabian Peninsula",4900000,17818],
+ "Lebanon": ["LB","Beirut","Levant",5800000,10452],
+ "Oman": ["OM","Muscat","Arabian Peninsula",5300000,309500],
+ "Palestine": ["PS","Ramallah","Levant",5500000,6020,"Palestine (West Bank and Gaza)","Palestinians claim East Jerusalem as their capital; the Palestinian Authority is based in Ramallah"],
+ "Qatar": ["QA","Doha","Arabian Peninsula",3100000,11586],
+ "Saudi Arabia": ["SA","Riyadh","Arabian Peninsula",35300000,2149690],
+ "Syria": ["SY","Damascus","Levant",24000000,185180,null,"Population is uncertain after the civil war"],
+ "Turkey": ["TR","Ankara","Anatolia",85400000,783562,"Türkiye"],
+ "United Arab Emirates": ["AE","Abu Dhabi","Arabian Peninsula",11000000,83600],
+ "Yemen": ["YE","Sana'a","Arabian Peninsula",40000000,527968,null,"Sana'a is held by the Houthi movement; the internationally recognised government is based in Aden. Population is uncertain"]
+}

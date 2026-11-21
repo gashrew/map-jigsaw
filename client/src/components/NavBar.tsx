@@ -51,6 +51,13 @@ const MAPS: MapEntry[] = [
     subtitle: "13 areas",
     available: true,
   },
+  {
+    path: "/middle-east",
+    label: "Middle East",
+    flag: "🌍",
+    subtitle: "17 countries",
+    available: true,
+  },
 ];
 
 export function NavBar() {

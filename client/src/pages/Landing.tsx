@@ -9,6 +9,7 @@ import { COUNTIES, SVG_WIDTH as ENG_W, SVG_HEIGHT as ENG_H } from "@/lib/countie
 import { EUROPE, EUROPE_CONTEXT, SVG_WIDTH as EU_W, SVG_HEIGHT as EU_H } from "@/lib/europeData";
 import { SOUTH_AMERICA, SOUTH_AMERICA_CONTEXT, SVG_WIDTH as SA_W, SVG_HEIGHT as SA_H } from "@/lib/southAmericaData";
 import { CANADA, CANADA_CONTEXT, SVG_WIDTH as CA_W, SVG_HEIGHT as CA_H } from "@/lib/canadaData";
+import { MIDDLE_EAST, MIDDLE_EAST_CONTEXT, SVG_WIDTH as ME_W, SVG_HEIGHT as ME_H } from "@/lib/middleEastData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -92,6 +93,23 @@ function CanadaMini() {
       <g transform={`translate(${ox},${oy}) scale(${sc})`}>
         {CANADA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {CANADA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function MiddleEastMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / ME_W, H / ME_H) * 0.95;
+  const ox = (W - ME_W * sc) / 2;
+  const oy = (H - ME_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {MIDDLE_EAST_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {MIDDLE_EAST.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
         ))}
       </g>
@@ -305,6 +323,17 @@ export default function Landing() {
           unit="areas"
           features={["10 provinces + 3 territories", "Region colours", "Capitals", "2021 census population", "Quiz mode"]}
           preview={<CanadaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/middle-east"
+          flag="🌍"
+          title="Middle East"
+          subtitle="Natural Earth boundary data"
+          count={MIDDLE_EAST.length}
+          unit="countries"
+          features={["From Egypt to Iran", "Region colours", "Capitals", "Facts and economy", "Quiz mode"]}
+          preview={<MiddleEastMini />}
           available={true}
         />
         <MapCard

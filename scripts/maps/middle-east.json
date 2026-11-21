@@ -1,0 +1,19 @@
+{
+  "info": "middle-east-info.json",
+  "exportName": "MIDDLE_EAST",
+  "comment": "Lambert azimuthal equal-area centred on 45°E 28°N",
+  "rotate": [-45, -28],
+  "window": [24, 64, 11, 43],
+  "keepAll": [],
+  "frameExclude": [],
+  "merge": { "Cyprus": ["N. Cyprus"] },
+  "labelAt": {},
+  "contextBox": [10, 80, 3, 50],
+  "shades": {
+    "Levant": ["#1d8a70", "#3daa90", "#5dc4aa", "#0d7a60", "#2d9a80"],
+    "Arabian Peninsula": ["#c05a34", "#e07a54", "#d06a44", "#f08a64", "#b04a24"],
+    "Iraq and Iran": ["#5a4e9f", "#8a7ecf"],
+    "Anatolia": ["#3a7abf"],
+    "North Africa": ["#b8923a"]
+  }
+}
