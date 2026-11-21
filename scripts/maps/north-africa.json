@@ -1,0 +1,38 @@
+{
+ "info": "north-africa-info.json",
+ "exportName": "NORTH_AFRICA",
+ "comment": "Lambert azimuthal equal-area centred on 12°E 24°N",
+ "rotate": [
+  -12,
+  -24
+ ],
+ "window": [
+  -18,
+  40,
+  8,
+  38
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {},
+ "labelAt": {},
+ "contextBox": [
+  -30,
+  55,
+  -5,
+  45
+ ],
+ "shades": {
+  "Maghreb": [
+   "#c05a34",
+   "#e07a54",
+   "#d06a44",
+   "#f08a64",
+   "#b04a24"
+  ],
+  "Nile Valley": [
+   "#b8923a",
+   "#d8b25a"
+  ]
+ }
+}

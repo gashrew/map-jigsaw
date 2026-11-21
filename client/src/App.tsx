@@ -14,6 +14,10 @@ import SouthAmerica from "./pages/SouthAmerica";
 import Canada from "./pages/Canada";
 import MiddleEast from "./pages/MiddleEast";
 import India from "./pages/India";
+import SouthernAfrica from "./pages/SouthernAfrica";
+import CentralEastAfrica from "./pages/CentralEastAfrica";
+import WestAfrica from "./pages/WestAfrica";
+import NorthAfrica from "./pages/NorthAfrica";
 import NewZealand from "./pages/NewZealand";
 import Australia from "./pages/Australia";
 import SoutheastAsia from "./pages/SoutheastAsia";
@@ -31,6 +35,10 @@ function Router() {
       <Route path="/canada" component={Canada} />
       <Route path="/middle-east" component={MiddleEast} />
       <Route path="/india" component={India} />
+      <Route path="/southern-africa" component={SouthernAfrica} />
+      <Route path="/central-east-africa" component={CentralEastAfrica} />
+      <Route path="/west-africa" component={WestAfrica} />
+      <Route path="/north-africa" component={NorthAfrica} />
       <Route path="/new-zealand" component={NewZealand} />
       <Route path="/australia" component={Australia} />
       <Route path="/southeast-asia" component={SoutheastAsia} />

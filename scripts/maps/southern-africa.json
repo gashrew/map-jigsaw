@@ -1,0 +1,41 @@
+{
+ "info": "southern-africa-info.json",
+ "exportName": "SOUTHERN_AFRICA",
+ "comment": "Lambert azimuthal equal-area centred on 35°E -20°N",
+ "rotate": [
+  -35,
+  20
+ ],
+ "window": [
+  11,
+  64,
+  -35.5,
+  -3
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {},
+ "labelAt": {},
+ "contextBox": [
+  0,
+  75,
+  -45,
+  5
+ ],
+ "shades": {
+  "Southern mainland": [
+   "#3a7abf",
+   "#1d8a70",
+   "#5a4e9f",
+   "#6aaae0",
+   "#5dc4aa",
+   "#8a7ecf"
+  ],
+  "Indian Ocean islands": [
+   "#c05a34",
+   "#e07a54",
+   "#d06a44",
+   "#f08a64"
+  ]
+ }
+}

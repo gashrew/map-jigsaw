@@ -28,6 +28,12 @@ export const MAP_GROUPS: { title: string; maps: MapEntry[] }[] = [
     { path: "/southeast-asia", label: "Southeast Asia", flag: "🌏", subtitle: "11 countries" },
     { path: "/india", label: "India", flag: "🇮🇳", subtitle: "36 states and territories" },
   ] },
+  { title: "Africa", maps: [
+    { path: "/north-africa", label: "North Africa", flag: "🌍", subtitle: "7 pieces" },
+    { path: "/west-africa", label: "West Africa", flag: "🌍", subtitle: "16 countries" },
+    { path: "/central-east-africa", label: "Central & East Africa", flag: "🌍", subtitle: "19 countries" },
+    { path: "/southern-africa", label: "Southern Africa", flag: "🌍", subtitle: "13 countries" },
+  ] },
   { title: "Australasia", maps: [
     { path: "/australia", label: "Australia", flag: "🇦🇺", subtitle: "8 states and territories" },
     { path: "/new-zealand", label: "New Zealand", flag: "🇳🇿", subtitle: "16 regions" },

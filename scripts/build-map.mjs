@@ -88,7 +88,7 @@ function labelPoint(f) {
     if (inside && a > bestA) { bestA = a; best = rings; }
   }
   const [cx, cy] = polylabel(best, 0.5);
-  return [Math.min(W - 40, Math.max(8, cx)), Math.min(H - 8, Math.max(8, cy))];
+  return [Math.min(W - 8, Math.max(8, cx)), Math.min(H - 8, Math.max(8, cy))]; // keep labels on the map
 }
 const out = pieces.map(({ name, f }) => {
   const [abbr, capital, region, pop, area, display, note] = info[name];

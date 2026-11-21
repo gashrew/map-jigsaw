@@ -16,6 +16,10 @@ import { SOUTHEAST_ASIA, SOUTHEAST_ASIA_CONTEXT, SVG_WIDTH as SOUTHEAST_ASIA_W, 
 import { INDIA, INDIA_CONTEXT, SVG_WIDTH as IN_W, SVG_HEIGHT as IN_H } from "@/lib/indiaData";
 import { AUSTRALIA, AUSTRALIA_CONTEXT, SVG_WIDTH as AUSTRALIA_W, SVG_HEIGHT as AUSTRALIA_H } from "@/lib/australiaData";
 import { NEW_ZEALAND, NEW_ZEALAND_CONTEXT, SVG_WIDTH as NEW_ZEALAND_W, SVG_HEIGHT as NEW_ZEALAND_H } from "@/lib/newZealandData";
+import { NORTH_AFRICA, NORTH_AFRICA_CONTEXT, SVG_WIDTH as NORTH_AFRICA_W, SVG_HEIGHT as NORTH_AFRICA_H } from "@/lib/northAfricaData";
+import { WEST_AFRICA, WEST_AFRICA_CONTEXT, SVG_WIDTH as WEST_AFRICA_W, SVG_HEIGHT as WEST_AFRICA_H } from "@/lib/westAfricaData";
+import { CENTRAL_EAST_AFRICA, CENTRAL_EAST_AFRICA_CONTEXT, SVG_WIDTH as CENTRAL_EAST_AFRICA_W, SVG_HEIGHT as CENTRAL_EAST_AFRICA_H } from "@/lib/centralEastAfricaData";
+import { SOUTHERN_AFRICA, SOUTHERN_AFRICA_CONTEXT, SVG_WIDTH as SOUTHERN_AFRICA_W, SVG_HEIGHT as SOUTHERN_AFRICA_H } from "@/lib/southernAfricaData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -219,6 +223,74 @@ function NewZealandMini() {
         {NEW_ZEALAND_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {NEW_ZEALAND.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="2" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function NorthAfricaMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / NORTH_AFRICA_W, H / NORTH_AFRICA_H) * 0.95;
+  const ox = (W - NORTH_AFRICA_W * sc) / 2;
+  const oy = (H - NORTH_AFRICA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {NORTH_AFRICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {NORTH_AFRICA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function WestAfricaMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / WEST_AFRICA_W, H / WEST_AFRICA_H) * 0.95;
+  const ox = (W - WEST_AFRICA_W * sc) / 2;
+  const oy = (H - WEST_AFRICA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {WEST_AFRICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {WEST_AFRICA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function CentralEastAfricaMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / CENTRAL_EAST_AFRICA_W, H / CENTRAL_EAST_AFRICA_H) * 0.95;
+  const ox = (W - CENTRAL_EAST_AFRICA_W * sc) / 2;
+  const oy = (H - CENTRAL_EAST_AFRICA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {CENTRAL_EAST_AFRICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {CENTRAL_EAST_AFRICA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function SouthernAfricaMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / SOUTHERN_AFRICA_W, H / SOUTHERN_AFRICA_H) * 0.95;
+  const ox = (W - SOUTHERN_AFRICA_W * sc) / 2;
+  const oy = (H - SOUTHERN_AFRICA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {SOUTHERN_AFRICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {SOUTHERN_AFRICA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
         ))}
       </g>
     </svg>
@@ -508,6 +580,50 @@ export default function Landing() {
           unit="regions"
           features={["16 regions", "Māori names", "Stats NZ regional GDP", "Quiz mode"]}
           preview={<NewZealandMini />}
+          available={true}
+        />
+        <MapCard
+          href="/north-africa"
+          flag="🌍"
+          title="North Africa"
+          subtitle="Natural Earth boundary data"
+          count={NORTH_AFRICA.length}
+          unit="pieces"
+          features={["Morocco to Sudan", "Western Sahara", "Capitals", "Facts and economy"]}
+          preview={<NorthAfricaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/west-africa"
+          flag="🌍"
+          title="West Africa"
+          subtitle="Natural Earth boundary data"
+          count={WEST_AFRICA.length}
+          unit="countries"
+          features={["Mauritania to Nigeria", "Cabo Verde", "Capitals", "Facts and economy"]}
+          preview={<WestAfricaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/central-east-africa"
+          flag="🌍"
+          title="Central & East Africa"
+          subtitle="Natural Earth boundary data"
+          count={CENTRAL_EAST_AFRICA.length}
+          unit="countries"
+          features={["Chad to Tanzania", "Horn of Africa", "Capitals", "Facts and economy"]}
+          preview={<CentralEastAfricaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/southern-africa"
+          flag="🌍"
+          title="Southern Africa"
+          subtitle="Natural Earth boundary data"
+          count={SOUTHERN_AFRICA.length}
+          unit="countries"
+          features={["South Africa to Zambia", "Madagascar and islands", "Capitals", "Facts and economy"]}
+          preview={<SouthernAfricaMini />}
           available={true}
         />
         <MapCard

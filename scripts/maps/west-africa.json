@@ -1,0 +1,41 @@
+{
+ "info": "west-africa-info.json",
+ "exportName": "WEST_AFRICA",
+ "comment": "Lambert azimuthal equal-area centred on 5°E 15°N",
+ "rotate": [
+  -5,
+  -15
+ ],
+ "window": [
+  -26,
+  16.5,
+  3.5,
+  28.5
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {},
+ "labelAt": {},
+ "contextBox": [
+  -35,
+  30,
+  -5,
+  40
+ ],
+ "shades": {
+  "Sahel": [
+   "#b8923a",
+   "#d8b25a",
+   "#a8822a",
+   "#c9a24a"
+  ],
+  "Coastal West Africa": [
+   "#1d8a70",
+   "#3daa90",
+   "#5dc4aa",
+   "#0d7a60",
+   "#2d9a80",
+   "#7dd4ba"
+  ]
+ }
+}

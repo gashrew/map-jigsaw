@@ -1,0 +1,146 @@
+{
+ "Mauritania": [
+  "MR",
+  "Nouakchott",
+  "Sahel",
+  4628000,
+  1030700,
+  null,
+  null
+ ],
+ "Senegal": [
+  "SN",
+  "Dakar",
+  "Coastal West Africa",
+  18900000,
+  196722,
+  null,
+  "Population is approximate; the IMF's figure per person for 2025 is missing"
+ ],
+ "Gambia": [
+  "GM",
+  "Banjul",
+  "Coastal West Africa",
+  2857000,
+  11295,
+  "The Gambia",
+  null
+ ],
+ "Guinea-Bissau": [
+  "GW",
+  "Bissau",
+  "Coastal West Africa",
+  2020000,
+  36125,
+  null,
+  null
+ ],
+ "Guinea": [
+  "GN",
+  "Conakry",
+  "Coastal West Africa",
+  15803000,
+  245857,
+  null,
+  null
+ ],
+ "Sierra Leone": [
+  "SL",
+  "Freetown",
+  "Coastal West Africa",
+  8823000,
+  71740,
+  null,
+  null
+ ],
+ "Liberia": [
+  "LR",
+  "Monrovia",
+  "Coastal West Africa",
+  5732000,
+  111369,
+  null,
+  null
+ ],
+ "Côte d'Ivoire": [
+  "CI",
+  "Yamoussoukro",
+  "Coastal West Africa",
+  32893000,
+  322463,
+  null,
+  "Yamoussoukro is the official capital; Abidjan is the largest city and economic capital"
+ ],
+ "Mali": [
+  "ML",
+  "Bamako",
+  "Sahel",
+  25228000,
+  1240192,
+  null,
+  null
+ ],
+ "Burkina Faso": [
+  "BF",
+  "Ouagadougou",
+  "Sahel",
+  24070000,
+  274200,
+  null,
+  null
+ ],
+ "Ghana": [
+  "GH",
+  "Accra",
+  "Coastal West Africa",
+  35068000,
+  238535,
+  null,
+  null
+ ],
+ "Togo": [
+  "TG",
+  "Lomé",
+  "Coastal West Africa",
+  8689000,
+  56785,
+  null,
+  null
+ ],
+ "Benin": [
+  "BJ",
+  "Porto-Novo",
+  "Coastal West Africa",
+  14818000,
+  114763,
+  null,
+  "Porto-Novo is the official capital; Cotonou is the seat of government and largest city"
+ ],
+ "Niger": [
+  "NE",
+  "Niamey",
+  "Sahel",
+  29137000,
+  1267000,
+  null,
+  null
+ ],
+ "Nigeria": [
+  "NG",
+  "Abuja",
+  "Coastal West Africa",
+  237523000,
+  923768,
+  null,
+  null
+ ],
+ "Cabo Verde": [
+  "CV",
+  "Praia",
+  "Coastal West Africa",
+  514000,
+  4033,
+  null,
+  null
+ ]
+}

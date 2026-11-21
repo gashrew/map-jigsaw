@@ -1,0 +1,65 @@
+{
+ "Morocco": [
+  "MA",
+  "Rabat",
+  "Maghreb",
+  37715000,
+  446550,
+  null,
+  "Area excludes Western Sahara, which Morocco claims and largely controls"
+ ],
+ "W. Sahara": [
+  "EH",
+  "Laayoune",
+  "Maghreb",
+  600000,
+  266000,
+  "Western Sahara",
+  "A disputed territory: most of it is controlled by Morocco, which claims it; the Polisario Front's Sahrawi Republic controls the east. Population is approximate"
+ ],
+ "Algeria": [
+  "DZ",
+  "Algiers",
+  "Maghreb",
+  47433000,
+  2381741,
+  null,
+  null
+ ],
+ "Tunisia": [
+  "TN",
+  "Tunis",
+  "Maghreb",
+  12349000,
+  163610,
+  null,
+  null
+ ],
+ "Libya": [
+  "LY",
+  "Tripoli",
+  "Maghreb",
+  7458000,
+  1759540,
+  null,
+  "Divided between rival governments in the west and east since 2014"
+ ],
+ "Egypt": [
+  "EG",
+  "Cairo",
+  "Nile Valley",
+  107913000,
+  1002450,
+  null,
+  null
+ ],
+ "Sudan": [
+  "SD",
+  "Khartoum",
+  "Nile Valley",
+  50417000,
+  1861484,
+  null,
+  "At war since April 2023 between the army and the Rapid Support Forces; figures are very uncertain"
+ ]
+}

@@ -1,0 +1,53 @@
+{
+ "info": "central-east-africa-info.json",
+ "exportName": "CENTRAL_EAST_AFRICA",
+ "comment": "Lambert azimuthal equal-area centred on 28°E -4°N",
+ "rotate": [
+  -28,
+  4
+ ],
+ "window": [
+  5,
+  52,
+  -19,
+  24
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {
+  "Somalia": [
+   "Somaliland"
+  ]
+ },
+ "labelAt": {},
+ "contextBox": [
+  -5,
+  65,
+  -30,
+  35
+ ],
+ "shades": {
+  "Central Africa": [
+   "#5a4e9f",
+   "#8a7ecf",
+   "#3a7abf",
+   "#baaee0",
+   "#6aaae0",
+   "#7a6ebf"
+  ],
+  "Horn of Africa": [
+   "#c05a34",
+   "#e07a54",
+   "#d06a44",
+   "#f08a64"
+  ],
+  "East Africa": [
+   "#1d8a70",
+   "#3daa90",
+   "#5dc4aa",
+   "#0d7a60",
+   "#2d9a80",
+   "#7dd4ba"
+  ]
+ }
+}

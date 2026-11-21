@@ -1,0 +1,119 @@
+{
+ "South Africa": [
+  "ZA",
+  "Pretoria",
+  "Southern mainland",
+  63103000,
+  1221037,
+  null,
+  "Pretoria is the executive capital, Cape Town the legislative and Bloemfontein the judicial capital"
+ ],
+ "Lesotho": [
+  "LS",
+  "Maseru",
+  "Southern mainland",
+  2364000,
+  30355,
+  null,
+  null
+ ],
+ "eSwatini": [
+  "SZ",
+  "Mbabane",
+  "Southern mainland",
+  1255000,
+  17364,
+  "Eswatini",
+  "Mbabane is the administrative capital; Lobamba is the royal and legislative capital"
+ ],
+ "Namibia": [
+  "NA",
+  "Windhoek",
+  "Southern mainland",
+  3062000,
+  825615,
+  null,
+  null
+ ],
+ "Botswana": [
+  "BW",
+  "Gaborone",
+  "Southern mainland",
+  2549000,
+  581730,
+  null,
+  null
+ ],
+ "Zimbabwe": [
+  "ZW",
+  "Harare",
+  "Southern mainland",
+  17359000,
+  390757,
+  null,
+  null
+ ],
+ "Zambia": [
+  "ZM",
+  "Lusaka",
+  "Southern mainland",
+  21915000,
+  752618,
+  null,
+  null
+ ],
+ "Malawi": [
+  "MW",
+  "Lilongwe",
+  "Southern mainland",
+  24077000,
+  118484,
+  null,
+  null
+ ],
+ "Mozambique": [
+  "MZ",
+  "Maputo",
+  "Southern mainland",
+  35816000,
+  801590,
+  null,
+  null
+ ],
+ "Madagascar": [
+  "MG",
+  "Antananarivo",
+  "Indian Ocean islands",
+  31451000,
+  587041,
+  null,
+  null
+ ],
+ "Comoros": [
+  "KM",
+  "Moroni",
+  "Indian Ocean islands",
+  910000,
+  1862,
+  null,
+  "Comoros also claims Mayotte, which voted to remain French"
+ ],
+ "Mauritius": [
+  "MU",
+  "Port Louis",
+  "Indian Ocean islands",
+  1243000,
+  2040,
+  null,
+  null
+ ],
+ "Seychelles": [
+  "SC",
+  "Victoria",
+  "Indian Ocean islands",
+  122000,
+  459,
+  null,
+  null
+ ]
+}
