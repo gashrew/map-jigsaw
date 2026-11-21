@@ -1,0 +1,63 @@
+{
+ "info": "africa-info.json",
+ "exportName": "AFRICA",
+ "comment": "Lambert azimuthal equal-area centred on 20°E 3°N",
+ "rotate": [
+  -20,
+  -3
+ ],
+ "window": [
+  -26,
+  64,
+  -36,
+  38
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {
+  "Somalia": [
+   "Somaliland"
+  ]
+ },
+ "labelAt": {},
+ "contextBox": [
+  -35,
+  75,
+  -45,
+  45
+ ],
+ "spreadShades": true,
+ "shades": {
+  "North Africa": [
+   "#c05a34",
+   "#e07a54",
+   "#d06a44",
+   "#f08a64",
+   "#b04a24"
+  ],
+  "West Africa": [
+   "#b8923a",
+   "#d8b25a",
+   "#a8822a",
+   "#c9a24a",
+   "#e0c27a",
+   "#987220"
+  ],
+  "Central & East Africa": [
+   "#1d8a70",
+   "#3daa90",
+   "#5dc4aa",
+   "#0d7a60",
+   "#2d9a80",
+   "#7dd4ba"
+  ],
+  "Southern Africa": [
+   "#3a7abf",
+   "#6aaae0",
+   "#4a8fd4",
+   "#5a4e9f",
+   "#8a7ecf",
+   "#2a6aaf"
+  ]
+ }
+}

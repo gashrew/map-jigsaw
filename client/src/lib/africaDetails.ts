@@ -131,3 +131,10 @@ export const SOUTHERN_AFRICA_DETAILS: MapDetails = {
   national: { label: "the Southern African average", gdp: 635_256, gdpPerCap: 3_095, totalLabel: "the region's total" },
   pieces: build(["ZA", "LS", "SZ", "NA", "BW", "ZW", "ZM", "MW", "MZ", "MG", "KM", "MU", "SC"]),
 };
+
+// The whole continent on one map, compared with the African average
+export const AFRICA_DETAILS: MapDetails = {
+  currency: "US$", gdpYear: 2025, gdpSource: SOURCE + "; none for Eritrea or Western Sahara",
+  national: { label: "the African average", gdp: 3_177_244, gdpPerCap: 2_136, totalLabel: "Africa's total" },
+  pieces: { ...NORTH_AFRICA_DETAILS.pieces, ...WEST_AFRICA_DETAILS.pieces, ...CENTRAL_EAST_AFRICA_DETAILS.pieces, ...SOUTHERN_AFRICA_DETAILS.pieces },
+};

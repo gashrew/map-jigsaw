@@ -34,6 +34,7 @@ export const MAP_GROUPS: { title: string; maps: MapEntry[] }[] = [
     { path: "/india", label: "India", flag: "🇮🇳", subtitle: "36 states and territories" },
   ] },
   { title: "Africa", maps: [
+    { path: "/africa", label: "Africa (whole continent)", flag: "🌍", subtitle: "55 countries and territories" },
     { path: "/north-africa", label: "North Africa", flag: "🌍", subtitle: "7 pieces" },
     { path: "/west-africa", label: "West Africa", flag: "🌍", subtitle: "16 countries" },
     { path: "/central-east-africa", label: "Central & East Africa", flag: "🌍", subtitle: "19 countries" },

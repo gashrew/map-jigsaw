@@ -1,0 +1,497 @@
+{
+ "Morocco": [
+  "MA",
+  "Rabat",
+  "North Africa",
+  37715000,
+  446550,
+  null,
+  "Area excludes Western Sahara, which Morocco claims and largely controls"
+ ],
+ "W. Sahara": [
+  "EH",
+  "Laayoune",
+  "North Africa",
+  600000,
+  266000,
+  "Western Sahara",
+  "A disputed territory: most of it is controlled by Morocco, which claims it; the Polisario Front's Sahrawi Republic controls the east. Population is approximate"
+ ],
+ "Algeria": [
+  "DZ",
+  "Algiers",
+  "North Africa",
+  47433000,
+  2381741,
+  null,
+  null
+ ],
+ "Tunisia": [
+  "TN",
+  "Tunis",
+  "North Africa",
+  12349000,
+  163610,
+  null,
+  null
+ ],
+ "Libya": [
+  "LY",
+  "Tripoli",
+  "North Africa",
+  7458000,
+  1759540,
+  null,
+  "Divided between rival governments in the west and east since 2014"
+ ],
+ "Egypt": [
+  "EG",
+  "Cairo",
+  "North Africa",
+  107913000,
+  1002450,
+  null,
+  null
+ ],
+ "Sudan": [
+  "SD",
+  "Khartoum",
+  "North Africa",
+  50417000,
+  1861484,
+  null,
+  "At war since April 2023 between the army and the Rapid Support Forces; figures are very uncertain"
+ ],
+ "Mauritania": [
+  "MR",
+  "Nouakchott",
+  "West Africa",
+  4628000,
+  1030700,
+  null,
+  null
+ ],
+ "Senegal": [
+  "SN",
+  "Dakar",
+  "West Africa",
+  18900000,
+  196722,
+  null,
+  "Population is approximate; the IMF's figure per person for 2025 is missing"
+ ],
+ "Gambia": [
+  "GM",
+  "Banjul",
+  "West Africa",
+  2857000,
+  11295,
+  "The Gambia",
+  null
+ ],
+ "Guinea-Bissau": [
+  "GW",
+  "Bissau",
+  "West Africa",
+  2020000,
+  36125,
+  null,
+  null
+ ],
+ "Guinea": [
+  "GN",
+  "Conakry",
+  "West Africa",
+  15803000,
+  245857,
+  null,
+  null
+ ],
+ "Sierra Leone": [
+  "SL",
+  "Freetown",
+  "West Africa",
+  8823000,
+  71740,
+  null,
+  null
+ ],
+ "Liberia": [
+  "LR",
+  "Monrovia",
+  "West Africa",
+  5732000,
+  111369,
+  null,
+  null
+ ],
+ "Côte d'Ivoire": [
+  "CI",
+  "Yamoussoukro",
+  "West Africa",
+  32893000,
+  322463,
+  null,
+  "Yamoussoukro is the official capital; Abidjan is the largest city and economic capital"
+ ],
+ "Mali": [
+  "ML",
+  "Bamako",
+  "West Africa",
+  25228000,
+  1240192,
+  null,
+  null
+ ],
+ "Burkina Faso": [
+  "BF",
+  "Ouagadougou",
+  "West Africa",
+  24070000,
+  274200,
+  null,
+  null
+ ],
+ "Ghana": [
+  "GH",
+  "Accra",
+  "West Africa",
+  35068000,
+  238535,
+  null,
+  null
+ ],
+ "Togo": [
+  "TG",
+  "Lomé",
+  "West Africa",
+  8689000,
+  56785,
+  null,
+  null
+ ],
+ "Benin": [
+  "BJ",
+  "Porto-Novo",
+  "West Africa",
+  14818000,
+  114763,
+  null,
+  "Porto-Novo is the official capital; Cotonou is the seat of government and largest city"
+ ],
+ "Niger": [
+  "NE",
+  "Niamey",
+  "West Africa",
+  29137000,
+  1267000,
+  null,
+  null
+ ],
+ "Nigeria": [
+  "NG",
+  "Abuja",
+  "West Africa",
+  237523000,
+  923768,
+  null,
+  null
+ ],
+ "Cabo Verde": [
+  "CV",
+  "Praia",
+  "West Africa",
+  514000,
+  4033,
+  null,
+  null
+ ],
+ "Chad": [
+  "TD",
+  "N'Djamena",
+  "Central & East Africa",
+  18962000,
+  1284000,
+  null,
+  null
+ ],
+ "Cameroon": [
+  "CM",
+  "Yaoundé",
+  "Central & East Africa",
+  29878000,
+  475442,
+  null,
+  null
+ ],
+ "Central African Rep.": [
+  "CF",
+  "Bangui",
+  "Central & East Africa",
+  5512000,
+  622984,
+  "Central African Republic",
+  null
+ ],
+ "Eq. Guinea": [
+  "GQ",
+  "Malabo",
+  "Central & East Africa",
+  1637000,
+  28051,
+  "Equatorial Guinea",
+  null
+ ],
+ "Gabon": [
+  "GA",
+  "Libreville",
+  "Central & East Africa",
+  2306000,
+  267668,
+  null,
+  null
+ ],
+ "Congo": [
+  "CG",
+  "Brazzaville",
+  "Central & East Africa",
+  6487000,
+  342000,
+  "Republic of the Congo",
+  null
+ ],
+ "Dem. Rep. Congo": [
+  "CD",
+  "Kinshasa",
+  "Central & East Africa",
+  106538000,
+  2344858,
+  "Democratic Republic of the Congo",
+  null
+ ],
+ "São Tomé and Principe": [
+  "ST",
+  "São Tomé",
+  "Central & East Africa",
+  240000,
+  964,
+  "São Tomé and Príncipe",
+  null
+ ],
+ "Angola": [
+  "AO",
+  "Luanda",
+  "Central & East Africa",
+  39209000,
+  1246700,
+  null,
+  null
+ ],
+ "Ethiopia": [
+  "ET",
+  "Addis Ababa",
+  "Central & East Africa",
+  129000000,
+  1104300,
+  null,
+  "Population is approximate. The IMF's per-person and total figures come from editions either side of Ethiopia's 2024 currency reform, so they do not quite match"
+ ],
+ "Eritrea": [
+  "ER",
+  "Asmara",
+  "Central & East Africa",
+  3600000,
+  117600,
+  null,
+  "Population is an estimate; Eritrea has never held a census and the IMF publishes no figures"
+ ],
+ "Djibouti": [
+  "DJ",
+  "Djibouti",
+  "Central & East Africa",
+  1056000,
+  23200,
+  null,
+  null
+ ],
+ "Somalia": [
+  "SO",
+  "Mogadishu",
+  "Central & East Africa",
+  16967000,
+  637657,
+  null,
+  "Includes Somaliland, which declared independence in 1991 but is not recognised by any UN member state"
+ ],
+ "Kenya": [
+  "KE",
+  "Nairobi",
+  "Central & East Africa",
+  53343000,
+  580367,
+  null,
+  null
+ ],
+ "Uganda": [
+  "UG",
+  "Kampala",
+  "Central & East Africa",
+  48014000,
+  241038,
+  null,
+  null
+ ],
+ "Rwanda": [
+  "RW",
+  "Kigali",
+  "Central & East Africa",
+  14163000,
+  26338,
+  null,
+  null
+ ],
+ "Burundi": [
+  "BI",
+  "Gitega",
+  "Central & East Africa",
+  14465000,
+  27834,
+  null,
+  "Gitega became the political capital in 2019; Bujumbura is the largest city"
+ ],
+ "Tanzania": [
+  "TZ",
+  "Dodoma",
+  "Central & East Africa",
+  70562000,
+  947303,
+  null,
+  "Dodoma is the capital; Dar es Salaam is the largest city"
+ ],
+ "S. Sudan": [
+  "SS",
+  "Juba",
+  "Central & East Africa",
+  12200000,
+  619745,
+  "South Sudan",
+  null
+ ],
+ "South Africa": [
+  "ZA",
+  "Pretoria",
+  "Southern Africa",
+  63103000,
+  1221037,
+  null,
+  "Pretoria is the executive capital, Cape Town the legislative and Bloemfontein the judicial capital"
+ ],
+ "Lesotho": [
+  "LS",
+  "Maseru",
+  "Southern Africa",
+  2364000,
+  30355,
+  null,
+  null
+ ],
+ "eSwatini": [
+  "SZ",
+  "Mbabane",
+  "Southern Africa",
+  1255000,
+  17364,
+  "Eswatini",
+  "Mbabane is the administrative capital; Lobamba is the royal and legislative capital"
+ ],
+ "Namibia": [
+  "NA",
+  "Windhoek",
+  "Southern Africa",
+  3062000,
+  825615,
+  null,
+  null
+ ],
+ "Botswana": [
+  "BW",
+  "Gaborone",
+  "Southern Africa",
+  2549000,
+  581730,
+  null,
+  null
+ ],
+ "Zimbabwe": [
+  "ZW",
+  "Harare",
+  "Southern Africa",
+  17359000,
+  390757,
+  null,
+  null
+ ],
+ "Zambia": [
+  "ZM",
+  "Lusaka",
+  "Southern Africa",
+  21915000,
+  752618,
+  null,
+  null
+ ],
+ "Malawi": [
+  "MW",
+  "Lilongwe",
+  "Southern Africa",
+  24077000,
+  118484,
+  null,
+  null
+ ],
+ "Mozambique": [
+  "MZ",
+  "Maputo",
+  "Southern Africa",
+  35816000,
+  801590,
+  null,
+  null
+ ],
+ "Madagascar": [
+  "MG",
+  "Antananarivo",
+  "Southern Africa",
+  31451000,
+  587041,
+  null,
+  null
+ ],
+ "Comoros": [
+  "KM",
+  "Moroni",
+  "Southern Africa",
+  910000,
+  1862,
+  null,
+  "Comoros also claims Mayotte, which voted to remain French"
+ ],
+ "Mauritius": [
+  "MU",
+  "Port Louis",
+  "Southern Africa",
+  1243000,
+  2040,
+  null,
+  null
+ ],
+ "Seychelles": [
+  "SC",
+  "Victoria",
+  "Southern Africa",
+  122000,
+  459,
+  null,
+  null
+ ]
+}

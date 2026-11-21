@@ -25,6 +25,7 @@ import { CARIBBEAN, CARIBBEAN_CONTEXT, SVG_WIDTH as CARIBBEAN_W, SVG_HEIGHT as C
 import { SCOTLAND, SCOTLAND_CONTEXT, SVG_WIDTH as SCOTLAND_W, SVG_HEIGHT as SCOTLAND_H } from "@/lib/scotlandData";
 import { WALES, WALES_CONTEXT, SVG_WIDTH as WALES_W, SVG_HEIGHT as WALES_H } from "@/lib/walesData";
 import { NORTHERN_IRELAND, NORTHERN_IRELAND_CONTEXT, SVG_WIDTH as NORTHERN_IRELAND_W, SVG_HEIGHT as NORTHERN_IRELAND_H } from "@/lib/northernIrelandData";
+import { AFRICA, AFRICA_CONTEXT, SVG_WIDTH as AFRICA_W, SVG_HEIGHT as AFRICA_H } from "@/lib/africaData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -387,6 +388,23 @@ function NorthernIrelandMini() {
   );
 }
 
+function AfricaMini() {
+  const W = 190, H = 200;
+  const sc = Math.min(W / AFRICA_W, H / AFRICA_H) * 0.95;
+  const ox = (W - AFRICA_W * sc) / 2;
+  const oy = (H - AFRICA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {AFRICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {AFRICA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
 // ─── Map card ─────────────────────────────────────────────────────────────────
 interface MapCardProps {
   href: string;
@@ -670,6 +688,17 @@ export default function Landing() {
           unit="regions"
           features={["16 regions", "Māori names", "Stats NZ regional GDP", "Quiz mode"]}
           preview={<NewZealandMini />}
+          available={true}
+        />
+        <MapCard
+          href="/africa"
+          flag="🌍"
+          title="Africa"
+          subtitle="Natural Earth boundary data"
+          count={AFRICA.length}
+          unit="countries"
+          features={["The whole continent", "Four regions", "Capitals", "Facts and economy"]}
+          preview={<AfricaMini />}
           available={true}
         />
         <MapCard
