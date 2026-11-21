@@ -1,0 +1,74 @@
+{
+ "Mexico": [
+  "MX",
+  "Mexico City",
+  "Mexico",
+  133196000,
+  1964375,
+  null,
+  null
+ ],
+ "Guatemala": [
+  "GT",
+  "Guatemala City",
+  "Central America",
+  18353000,
+  108889,
+  null,
+  null
+ ],
+ "Belize": [
+  "BZ",
+  "Belmopan",
+  "Central America",
+  418000,
+  22966,
+  null,
+  null
+ ],
+ "Honduras": [
+  "HN",
+  "Tegucigalpa",
+  "Central America",
+  11032000,
+  112492,
+  null,
+  null
+ ],
+ "El Salvador": [
+  "SV",
+  "San Salvador",
+  "Central America",
+  6480000,
+  21041,
+  null,
+  null
+ ],
+ "Nicaragua": [
+  "NI",
+  "Managua",
+  "Central America",
+  6664000,
+  130373,
+  null,
+  null
+ ],
+ "Costa Rica": [
+  "CR",
+  "San José",
+  "Central America",
+  5370000,
+  51100,
+  null,
+  null
+ ],
+ "Panama": [
+  "PA",
+  "Panama City",
+  "Central America",
+  4566000,
+  75417,
+  null,
+  null
+ ]
+}

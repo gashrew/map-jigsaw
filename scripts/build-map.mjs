@@ -106,7 +106,10 @@ out.forEach((p, i) => {
   const myIdx = geoms.findIndex(g => g.properties.name === srcOf(names[i]));
   const taken = new Set(nb[myIdx].map(j => out[names.findIndex(n => srcOf(n) === geoms[j].properties.name)]?.colour).filter(Boolean));
   const s = spec.shades[p.region];
-  p.colour = s.find(c => !taken.has(c)) || s[i % s.length];
+  // spreadShades: prefer the least-used shade, so islands with no land neighbours still vary
+  const used = (c) => out.filter(q => q.colour === c).length;
+  const free = s.filter(c => !taken.has(c));
+  p.colour = spec.spreadShades && free.length ? free.sort((a, b) => used(a) - used(b))[0] : (free[0] || s[i % s.length]);
 });
 const ctx = context.map(f => tidy(pathGen(f) || "")).filter(d => d.length > 10);
 const N = spec.exportName;

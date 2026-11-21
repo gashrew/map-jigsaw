@@ -16,6 +16,8 @@ export const MAP_GROUPS: { title: string; maps: MapEntry[] }[] = [
   { title: "Americas", maps: [
     { path: "/usa", label: "USA", flag: "🇺🇸", subtitle: "51 states" },
     { path: "/canada", label: "Canada", flag: "🇨🇦", subtitle: "13 provinces and territories" },
+    { path: "/central-america", label: "Mexico & Central America", flag: "🌎", subtitle: "8 countries" },
+    { path: "/caribbean", label: "Caribbean", flag: "🌎", subtitle: "14 pieces" },
     { path: "/south-america", label: "South America", flag: "🌎", subtitle: "14 pieces" },
   ] },
   { title: "Europe and the Middle East", maps: [

@@ -20,6 +20,8 @@ import { NORTH_AFRICA, NORTH_AFRICA_CONTEXT, SVG_WIDTH as NORTH_AFRICA_W, SVG_HE
 import { WEST_AFRICA, WEST_AFRICA_CONTEXT, SVG_WIDTH as WEST_AFRICA_W, SVG_HEIGHT as WEST_AFRICA_H } from "@/lib/westAfricaData";
 import { CENTRAL_EAST_AFRICA, CENTRAL_EAST_AFRICA_CONTEXT, SVG_WIDTH as CENTRAL_EAST_AFRICA_W, SVG_HEIGHT as CENTRAL_EAST_AFRICA_H } from "@/lib/centralEastAfricaData";
 import { SOUTHERN_AFRICA, SOUTHERN_AFRICA_CONTEXT, SVG_WIDTH as SOUTHERN_AFRICA_W, SVG_HEIGHT as SOUTHERN_AFRICA_H } from "@/lib/southernAfricaData";
+import { CENTRAL_AMERICA, CENTRAL_AMERICA_CONTEXT, SVG_WIDTH as CENTRAL_AMERICA_W, SVG_HEIGHT as CENTRAL_AMERICA_H } from "@/lib/centralAmericaData";
+import { CARIBBEAN, CARIBBEAN_CONTEXT, SVG_WIDTH as CARIBBEAN_W, SVG_HEIGHT as CARIBBEAN_H } from "@/lib/caribbeanData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -290,6 +292,40 @@ function SouthernAfricaMini() {
       <g transform={`translate(${ox},${oy}) scale(${sc})`}>
         {SOUTHERN_AFRICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {SOUTHERN_AFRICA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function CentralAmericaMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / CENTRAL_AMERICA_W, H / CENTRAL_AMERICA_H) * 0.95;
+  const ox = (W - CENTRAL_AMERICA_W * sc) / 2;
+  const oy = (H - CENTRAL_AMERICA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {CENTRAL_AMERICA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {CENTRAL_AMERICA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function CaribbeanMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / CARIBBEAN_W, H / CARIBBEAN_H) * 0.95;
+  const ox = (W - CARIBBEAN_W * sc) / 2;
+  const oy = (H - CARIBBEAN_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {CARIBBEAN_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {CARIBBEAN.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
         ))}
       </g>
@@ -624,6 +660,28 @@ export default function Landing() {
           unit="countries"
           features={["South Africa to Zambia", "Madagascar and islands", "Capitals", "Facts and economy"]}
           preview={<SouthernAfricaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/central-america"
+          flag="🌎"
+          title="Mexico & Central America"
+          subtitle="Natural Earth boundary data"
+          count={CENTRAL_AMERICA.length}
+          unit="countries"
+          features={["Mexico to Panama", "Capitals", "Facts and economy", "Quiz mode"]}
+          preview={<CentralAmericaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/caribbean"
+          flag="🌎"
+          title="Caribbean"
+          subtitle="Natural Earth boundary data"
+          count={CARIBBEAN.length}
+          unit="pieces"
+          features={["Cuba to Trinidad", "Puerto Rico", "Capitals", "Facts and economy"]}
+          preview={<CaribbeanMini />}
           available={true}
         />
         <MapCard

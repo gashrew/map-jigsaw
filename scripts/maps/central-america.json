@@ -1,0 +1,38 @@
+{
+ "info": "central-america-info.json",
+ "exportName": "CENTRAL_AMERICA",
+ "comment": "Lambert azimuthal equal-area centred on 97°W 19°N",
+ "rotate": [
+  97,
+  -19
+ ],
+ "window": [
+  -118,
+  -77,
+  7,
+  33
+ ],
+ "keepAll": [],
+ "frameExclude": [],
+ "merge": {},
+ "labelAt": {},
+ "contextBox": [
+  -125,
+  -60,
+  0,
+  40
+ ],
+ "shades": {
+  "Mexico": [
+   "#c05a34"
+  ],
+  "Central America": [
+   "#1d8a70",
+   "#3daa90",
+   "#5dc4aa",
+   "#0d7a60",
+   "#3a7abf",
+   "#6aaae0"
+  ]
+ }
+}

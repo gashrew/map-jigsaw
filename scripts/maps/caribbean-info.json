@@ -1,0 +1,128 @@
+{
+ "Cuba": [
+  "CU",
+  "Havana",
+  "Greater Antilles",
+  9700000,
+  109884,
+  null,
+  "Population is the official estimate; the IMF publishes no economic figures for Cuba"
+ ],
+ "Jamaica": [
+  "JM",
+  "Kingston",
+  "Greater Antilles",
+  2719000,
+  10991,
+  null,
+  null
+ ],
+ "Haiti": [
+  "HT",
+  "Port-au-Prince",
+  "Greater Antilles",
+  12555000,
+  27750,
+  null,
+  null
+ ],
+ "Dominican Rep.": [
+  "DO",
+  "Santo Domingo",
+  "Greater Antilles",
+  10886000,
+  48671,
+  "Dominican Republic",
+  null
+ ],
+ "Puerto Rico": [
+  "PR",
+  "San Juan",
+  "Greater Antilles",
+  3115000,
+  9104,
+  null,
+  "A territory of the United States; Puerto Ricans are US citizens but cannot vote in presidential elections"
+ ],
+ "Bahamas": [
+  "BS",
+  "Nassau",
+  "Bahamas",
+  396000,
+  13943,
+  "The Bahamas",
+  null
+ ],
+ "Trinidad and Tobago": [
+  "TT",
+  "Port of Spain",
+  "Lesser Antilles",
+  1435000,
+  5128,
+  null,
+  null
+ ],
+ "Barbados": [
+  "BB",
+  "Bridgetown",
+  "Lesser Antilles",
+  294000,
+  430,
+  null,
+  null
+ ],
+ "Antigua and Barb.": [
+  "AG",
+  "St. John's",
+  "Lesser Antilles",
+  105000,
+  442,
+  "Antigua and Barbuda",
+  null
+ ],
+ "St. Kitts and Nevis": [
+  "KN",
+  "Basseterre",
+  "Lesser Antilles",
+  52000,
+  261,
+  "Saint Kitts and Nevis",
+  null
+ ],
+ "Dominica": [
+  "DM",
+  "Roseau",
+  "Lesser Antilles",
+  75000,
+  751,
+  null,
+  null
+ ],
+ "Saint Lucia": [
+  "LC",
+  "Castries",
+  "Lesser Antilles",
+  181000,
+  617,
+  null,
+  null
+ ],
+ "St. Vin. and Gren.": [
+  "VC",
+  "Kingstown",
+  "Lesser Antilles",
+  108000,
+  389,
+  "Saint Vincent and the Grenadines",
+  null
+ ],
+ "Grenada": [
+  "GD",
+  "St. George's",
+  "Lesser Antilles",
+  112000,
+  344,
+  null,
+  null
+ ]
+}
