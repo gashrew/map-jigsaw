@@ -13,6 +13,9 @@ import Europe from "./pages/Europe";
 import SouthAmerica from "./pages/SouthAmerica";
 import Canada from "./pages/Canada";
 import MiddleEast from "./pages/MiddleEast";
+import SoutheastAsia from "./pages/SoutheastAsia";
+import SouthCentralAsia from "./pages/SouthCentralAsia";
+import EastAsia from "./pages/EastAsia";
 
 function Router() {
   return (
@@ -24,6 +27,9 @@ function Router() {
       <Route path="/south-america" component={SouthAmerica} />
       <Route path="/canada" component={Canada} />
       <Route path="/middle-east" component={MiddleEast} />
+      <Route path="/southeast-asia" component={SoutheastAsia} />
+      <Route path="/south-central-asia" component={SouthCentralAsia} />
+      <Route path="/east-asia" component={EastAsia} />
       <Route component={NotFound} />
     </Switch>
   );

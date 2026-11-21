@@ -10,6 +10,9 @@ import { EUROPE, EUROPE_CONTEXT, SVG_WIDTH as EU_W, SVG_HEIGHT as EU_H } from "@
 import { SOUTH_AMERICA, SOUTH_AMERICA_CONTEXT, SVG_WIDTH as SA_W, SVG_HEIGHT as SA_H } from "@/lib/southAmericaData";
 import { CANADA, CANADA_CONTEXT, SVG_WIDTH as CA_W, SVG_HEIGHT as CA_H } from "@/lib/canadaData";
 import { MIDDLE_EAST, MIDDLE_EAST_CONTEXT, SVG_WIDTH as ME_W, SVG_HEIGHT as ME_H } from "@/lib/middleEastData";
+import { EAST_ASIA, EAST_ASIA_CONTEXT, SVG_WIDTH as EAST_ASIA_W, SVG_HEIGHT as EAST_ASIA_H } from "@/lib/eastAsiaData";
+import { SOUTH_CENTRAL_ASIA, SOUTH_CENTRAL_ASIA_CONTEXT, SVG_WIDTH as SOUTH_CENTRAL_ASIA_W, SVG_HEIGHT as SOUTH_CENTRAL_ASIA_H } from "@/lib/southCentralAsiaData";
+import { SOUTHEAST_ASIA, SOUTHEAST_ASIA_CONTEXT, SVG_WIDTH as SOUTHEAST_ASIA_W, SVG_HEIGHT as SOUTHEAST_ASIA_H } from "@/lib/southeastAsiaData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -110,6 +113,57 @@ function MiddleEastMini() {
       <g transform={`translate(${ox},${oy}) scale(${sc})`}>
         {MIDDLE_EAST_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {MIDDLE_EAST.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function EastAsiaMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / EAST_ASIA_W, H / EAST_ASIA_H) * 0.95;
+  const ox = (W - EAST_ASIA_W * sc) / 2;
+  const oy = (H - EAST_ASIA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {EAST_ASIA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {EAST_ASIA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function SouthCentralAsiaMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / SOUTH_CENTRAL_ASIA_W, H / SOUTH_CENTRAL_ASIA_H) * 0.95;
+  const ox = (W - SOUTH_CENTRAL_ASIA_W * sc) / 2;
+  const oy = (H - SOUTH_CENTRAL_ASIA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {SOUTH_CENTRAL_ASIA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {SOUTH_CENTRAL_ASIA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function SoutheastAsiaMini() {
+  const W = 210, H = 190;
+  const sc = Math.min(W / SOUTHEAST_ASIA_W, H / SOUTHEAST_ASIA_H) * 0.95;
+  const ox = (W - SOUTHEAST_ASIA_W * sc) / 2;
+  const oy = (H - SOUTHEAST_ASIA_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {SOUTHEAST_ASIA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {SOUTHEAST_ASIA.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
         ))}
       </g>
@@ -334,6 +388,39 @@ export default function Landing() {
           unit="countries"
           features={["From Egypt to Iran", "Region colours", "Capitals", "Facts and economy", "Quiz mode"]}
           preview={<MiddleEastMini />}
+          available={true}
+        />
+        <MapCard
+          href="/east-asia"
+          flag="🌏"
+          title="East Asia"
+          subtitle="Natural Earth boundary data"
+          count={EAST_ASIA.length}
+          unit="pieces"
+          features={["Region colours", "Capitals", "Facts and economy", "Quiz mode"]}
+          preview={<EastAsiaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/south-central-asia"
+          flag="🌏"
+          title="South & Central Asia"
+          subtitle="Natural Earth boundary data"
+          count={SOUTH_CENTRAL_ASIA.length}
+          unit="countries"
+          features={["Region colours", "Capitals", "Facts and economy", "Quiz mode"]}
+          preview={<SouthCentralAsiaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/southeast-asia"
+          flag="🌏"
+          title="Southeast Asia"
+          subtitle="Natural Earth boundary data"
+          count={SOUTHEAST_ASIA.length}
+          unit="countries"
+          features={["Region colours", "Capitals", "Facts and economy", "Quiz mode"]}
+          preview={<SoutheastAsiaMini />}
           available={true}
         />
         <MapCard

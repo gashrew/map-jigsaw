@@ -1,0 +1,11 @@
+{
+  "info": "southeast-asia-info.json", "exportName": "SOUTHEAST_ASIA",
+  "comment": "Lambert azimuthal equal-area centred on 118°E 8°N",
+  "rotate": [-118, -8], "window": [91, 142, -12, 29],
+  "keepAll": [], "frameExclude": [], "merge": {}, "labelAt": {},
+  "contextBox": [80, 160, -25, 40],
+  "shades": {
+    "Mainland": ["#c05a34", "#e07a54", "#d06a44", "#f08a64", "#b04a24"],
+    "Maritime": ["#1d8a70", "#3daa90", "#5dc4aa", "#0d7a60", "#2d9a80", "#7dd4ba"]
+  }
+}

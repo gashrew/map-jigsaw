@@ -1,0 +1,13 @@
+{
+ "Indonesia": ["ID","Jakarta","Maritime",284500000,1904569,null,"A new capital, Nusantara, is being built on Borneo; Jakarta remains the capital for now"],
+ "Philippines": ["PH","Manila","Maritime",114100000,300000],
+ "Vietnam": ["VN","Hanoi","Mainland",102300000,331212],
+ "Thailand": ["TH","Bangkok","Mainland",71600000,513120],
+ "Malaysia": ["MY","Kuala Lumpur","Maritime",33900000,330803,null,"Putrajaya is the administrative centre; Kuala Lumpur is the official capital"],
+ "Myanmar": ["MM","Naypyidaw","Mainland",54800000,676578,null,"Ruled by the military since the 2021 coup, with fighting across much of the country"],
+ "Cambodia": ["KH","Phnom Penh","Mainland",18300000,181035],
+ "Laos": ["LA","Vientiane","Mainland",7400000,236800],
+ "Singapore": ["SG","Singapore","Maritime",6080000,735],
+ "Brunei": ["BN","Bandar Seri Begawan","Maritime",433000,5765],
+ "Timor-Leste": ["TL","Dili","Maritime",1410000,14874]
+}

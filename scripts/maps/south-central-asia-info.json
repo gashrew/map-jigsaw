@@ -1,0 +1,15 @@
+{
+ "India": ["IN","New Delhi","South Asia",1461000000,3287263,null,"Kashmir is divided: India, Pakistan and China each control parts and India and Pakistan both claim all of it. The map shows the lines of control on the ground; the disputed Siachen Glacier area is shown in grey. India's official area includes the parts it claims"],
+ "Pakistan": ["PK","Islamabad","South Asia",240700000,881913,null,"Area includes Azad Kashmir and Gilgit-Baltistan, the parts of Kashmir that Pakistan controls"],
+ "Bangladesh": ["BD","Dhaka","South Asia",173700000,148460],
+ "Nepal": ["NP","Kathmandu","South Asia",30100000,147516],
+ "Bhutan": ["BT","Thimphu","South Asia",800000,38394],
+ "Sri Lanka": ["LK","Sri Jayawardenepura Kotte","South Asia",21800000,65610,null,"Sri Jayawardenepura Kotte is the official capital; Colombo is the largest city and commercial capital"],
+ "Maldives": ["MV","Malé","South Asia",515000,298],
+ "Afghanistan": ["AF","Kabul","South Asia",44000000,652864,null,"Governed by the Taliban since 2021; population and economic figures are uncertain"],
+ "Kazakhstan": ["KZ","Astana","Central Asia",20600000,2724900],
+ "Uzbekistan": ["UZ","Tashkent","Central Asia",38200000,448978],
+ "Turkmenistan": ["TM","Ashgabat","Central Asia",6700000,488100,null,"Population and economic figures are uncertain"],
+ "Kyrgyzstan": ["KG","Bishkek","Central Asia",7600000,199951],
+ "Tajikistan": ["TJ","Dushanbe","Central Asia",10400000,143100]
+}

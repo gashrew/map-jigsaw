@@ -1,0 +1,11 @@
+{
+  "info": "south-central-asia-info.json", "exportName": "SOUTH_CENTRAL_ASIA",
+  "comment": "Lambert azimuthal equal-area centred on 72°E 28°N",
+  "rotate": [-72, -28], "window": [45, 99, -2, 57],
+  "keepAll": [], "frameExclude": [], "merge": {}, "labelAt": {},
+  "contextBox": [30, 115, -10, 65],
+  "shades": {
+    "South Asia": ["#c05a34", "#e07a54", "#d06a44", "#f08a64", "#b04a24", "#e09a74"],
+    "Central Asia": ["#3a7abf", "#6aaae0", "#4a8fd4", "#8abce8", "#2a6aaf"]
+  }
+}

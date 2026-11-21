@@ -1,235 +1,112 @@
 /**
  * NavBar — Dark Atlas design
- * Shared top navigation bar for switching between jigsaw maps.
- * Sits above the page-specific header controls.
+ * Shared top navigation: the brand (back to the front page) and a "Maps" menu,
+ * grouped by part of the world, so it stays tidy however many maps there are.
  */
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 
-interface MapEntry {
-  path: string;
-  label: string;
-  flag: string;
-  subtitle: string;
-  available: boolean;
-}
+interface MapEntry { path: string; label: string; flag: string; subtitle: string; }
 
-const MAPS: MapEntry[] = [
-  {
-    path: "/england",
-    label: "England",
-    flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-    subtitle: "90 boundary areas",
-    available: true,
-  },
-  {
-    path: "/usa",
-    label: "USA",
-    flag: "🇺🇸",
-    subtitle: "51 areas",
-    available: true,
-  },
-  {
-    path: "/europe",
-    label: "Europe",
-    flag: "🌍",
-    subtitle: "47 countries",
-    available: true,
-  },
-  {
-    path: "/south-america",
-    label: "S. America",
-    flag: "🌎",
-    subtitle: "14 areas",
-    available: true,
-  },
-  {
-    path: "/canada",
-    label: "Canada",
-    flag: "🇨🇦",
-    subtitle: "13 areas",
-    available: true,
-  },
-  {
-    path: "/middle-east",
-    label: "Middle East",
-    flag: "🌍",
-    subtitle: "17 countries",
-    available: true,
-  },
+export const MAP_GROUPS: { title: string; maps: MapEntry[] }[] = [
+  { title: "Britain", maps: [
+    { path: "/england", label: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", subtitle: "90 areas" },
+  ] },
+  { title: "Americas", maps: [
+    { path: "/usa", label: "USA", flag: "🇺🇸", subtitle: "51 states" },
+    { path: "/canada", label: "Canada", flag: "🇨🇦", subtitle: "13 provinces and territories" },
+    { path: "/south-america", label: "South America", flag: "🌎", subtitle: "14 pieces" },
+  ] },
+  { title: "Europe and the Middle East", maps: [
+    { path: "/europe", label: "Europe", flag: "🌍", subtitle: "47 countries" },
+    { path: "/middle-east", label: "Middle East", flag: "🌍", subtitle: "17 countries" },
+  ] },
+  { title: "Asia", maps: [
+    { path: "/east-asia", label: "East Asia", flag: "🌏", subtitle: "6 pieces" },
+    { path: "/south-central-asia", label: "South & Central Asia", flag: "🌏", subtitle: "13 countries" },
+    { path: "/southeast-asia", label: "Southeast Asia", flag: "🌏", subtitle: "11 countries" },
+  ] },
 ];
+
+const GOLD = "#e0c97f";
 
 export function NavBar() {
   const [location] = useLocation();
-  const [hovered, setHovered] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const all = MAP_GROUPS.flatMap(g => g.maps);
+  const current = all.find(m => location === m.path || location.startsWith(m.path + "/"));
+
+  useEffect(() => { setOpen(false); }, [location]);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: PointerEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false); };
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("pointerdown", close);
+    window.addEventListener("keydown", esc);
+    return () => { window.removeEventListener("pointerdown", close); window.removeEventListener("keydown", esc); };
+  }, [open]);
 
   return (
-    <nav
-      style={{
-        background: "#0d1829",
-        borderBottom: "1px solid rgba(224,201,127,0.12)",
-        padding: "0 14px",
-        display: "flex",
-        alignItems: "center",
-        gap: 4,
-        flexShrink: 0,
-        height: 36,
-        zIndex: 200,
-      }}
-    >
-      {/* Brand mark */}
-      <span
-        style={{
-          fontFamily: "'Playfair Display', Georgia, serif",
-          fontSize: "0.72rem",
-          color: "rgba(224,201,127,0.45)",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          marginRight: 12,
-          whiteSpace: "nowrap",
-        }}
-      >
-        Map Jigsaw
-      </span>
+    <nav style={{
+      background: "#0d1829", borderBottom: "1px solid rgba(224,201,127,0.12)", padding: "0 14px",
+      display: "flex", alignItems: "center", gap: 12, flexShrink: 0, height: 36, zIndex: 1000, position: "relative",
+    }}>
+      <Link href="/">
+        <span title="All maps" style={{
+          fontFamily: "'Playfair Display', Georgia, serif", fontSize: "0.72rem", color: "rgba(224,201,127,0.6)",
+          letterSpacing: "0.12em", textTransform: "uppercase", whiteSpace: "nowrap", cursor: "pointer",
+        }}>Map Jigsaw</span>
+      </Link>
+      <div style={{ width: 1, height: 16, background: "rgba(58,80,112,0.6)" }} />
 
-      {/* Separator */}
-      <div style={{ width: 1, height: 16, background: "rgba(58,80,112,0.6)", marginRight: 8 }} />
+      <div ref={ref} style={{ position: "relative" }}>
+        <button onClick={() => setOpen(o => !o)} aria-expanded={open} aria-haspopup="menu" style={{
+          display: "flex", alignItems: "center", gap: 7, height: 28, padding: "0 10px", borderRadius: 5, cursor: "pointer",
+          background: open ? "rgba(224,201,127,0.12)" : "transparent", border: "1px solid rgba(224,201,127,0.3)",
+          color: GOLD, fontFamily: "Inter, sans-serif", fontSize: "0.78rem", fontWeight: 600,
+        }}>
+          {current ? <><span style={{ fontSize: "0.95rem" }}>{current.flag}</span>{current.label}</> : "Choose a map"}
+          <span style={{ fontSize: "0.6rem", opacity: 0.8, marginLeft: 2 }}>{open ? "▲" : "▼"}</span>
+        </button>
 
-      {/* Map links */}
-      {MAPS.map((m) => {
-        const isActive = location === m.path || (m.path !== "/" && location.startsWith(m.path));
-        const isHovered = hovered === m.path;
-
-        return m.available ? (
-          <Link key={m.path} href={m.path}>
-            <NavItem
-              flag={m.flag}
-              label={m.label}
-              subtitle={m.subtitle}
-              isActive={isActive}
-              isHovered={isHovered}
-              disabled={false}
-              onMouseEnter={() => setHovered(m.path)}
-              onMouseLeave={() => setHovered(null)}
-            />
-          </Link>
-        ) : (
-          <NavItem
-            key={m.path}
-            flag={m.flag}
-            label={m.label}
-            subtitle={m.subtitle}
-            isActive={false}
-            isHovered={isHovered}
-            disabled={true}
-            onMouseEnter={() => setHovered(m.path)}
-            onMouseLeave={() => setHovered(null)}
-          />
-        );
-      })}
-
-      {/* Spacer */}
-      <div style={{ flex: 1 }} />
-
-      {/* Coming soon badge */}
-      <span
-        style={{
-          fontSize: "0.6rem",
-          color: "#3a5070",
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          fontFamily: "Inter, sans-serif",
-        }}
-      >
-        More maps coming soon
-      </span>
-    </nav>
-  );
-}
-
-function NavItem({
-  flag,
-  label,
-  subtitle,
-  isActive,
-  isHovered,
-  disabled,
-  onMouseEnter,
-  onMouseLeave,
-}: {
-  flag: string;
-  label: string;
-  subtitle: string;
-  isActive: boolean;
-  isHovered: boolean;
-  disabled: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-}) {
-  return (
-    <div
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-        padding: "0 10px",
-        height: 36,
-        borderBottom: isActive
-          ? "2px solid #e0c97f"
-          : "2px solid transparent",
-        cursor: disabled ? "default" : "pointer",
-        opacity: disabled ? 0.38 : 1,
-        transition: "border-color 0.15s, background 0.15s",
-        background: isHovered && !disabled ? "rgba(224,201,127,0.05)" : "transparent",
-        position: "relative",
-      }}
-    >
-      <span style={{ fontSize: "0.95rem", lineHeight: 1 }}>{flag}</span>
-      <div>
-        <div
-          style={{
-            fontSize: "0.74rem",
-            fontFamily: "Inter, sans-serif",
-            fontWeight: isActive ? 600 : 400,
-            color: isActive ? "#e0c97f" : isHovered && !disabled ? "#c8d8e8" : "#6a8aaa",
-            lineHeight: 1.2,
-            transition: "color 0.15s",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {label}
-          {disabled && (
-            <span
-              style={{
-                marginLeft: 5,
-                fontSize: "0.55rem",
-                background: "rgba(224,201,127,0.15)",
-                color: "#a89050",
-                padding: "1px 5px",
-                borderRadius: 8,
-                letterSpacing: "0.06em",
-                textTransform: "uppercase",
-                verticalAlign: "middle",
-              }}
-            >
-              soon
-            </span>
-          )}
-        </div>
-        <div
-          style={{
-            fontSize: "0.58rem",
-            color: "#3a5070",
-            fontFamily: "Inter, sans-serif",
-            lineHeight: 1,
-          }}
-        >
-          {subtitle}
-        </div>
+        {open && (
+          <div role="menu" style={{
+            position: "absolute", top: "calc(100% + 6px)", left: 0, width: "min(560px, calc(100vw - 28px))",
+            background: "rgba(16,27,50,0.99)", border: "1px solid rgba(224,201,127,0.3)", borderRadius: 8,
+            boxShadow: "0 12px 40px rgba(0,0,0,0.75)", padding: "10px 12px",
+            display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "6px 16px",
+            maxHeight: "calc(100vh - 60px)", overflowY: "auto",
+          }}>
+            {MAP_GROUPS.map(g => (
+              <div key={g.title}>
+                <div style={{ fontSize: "0.6rem", color: "#6a80a0", textTransform: "uppercase", letterSpacing: "0.1em", margin: "4px 4px 4px", fontFamily: "Inter, sans-serif" }}>{g.title}</div>
+                {g.maps.map(m => {
+                  const active = current?.path === m.path;
+                  return (
+                    <Link key={m.path} href={m.path}>
+                      <div role="menuitem" style={{
+                        display: "flex", alignItems: "center", gap: 9, padding: "6px 8px", borderRadius: 5, cursor: "pointer",
+                        background: active ? "rgba(224,201,127,0.12)" : "transparent", fontFamily: "Inter, sans-serif",
+                      }}
+                        onMouseEnter={e => { if (!active) e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }}
+                        onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}>
+                        <span style={{ fontSize: "1.05rem", lineHeight: 1 }}>{m.flag}</span>
+                        <span>
+                          <span style={{ display: "block", fontSize: "0.8rem", color: active ? GOLD : "#c8d8e8", fontWeight: active ? 600 : 400 }}>{m.label}</span>
+                          <span style={{ display: "block", fontSize: "0.62rem", color: "#4a6080" }}>{m.subtitle}</span>
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+      <div style={{ flex: 1 }} />
+    </nav>
   );
 }

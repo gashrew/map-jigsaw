@@ -1,0 +1,8 @@
+{
+ "China": ["CN","Beijing","China",1405000000,9596961,null,"Includes Hong Kong and Macau, special administrative regions of China; the IMF's economic figures are for mainland China only"],
+ "Japan": ["JP","Tokyo","Japan",123800000,377975],
+ "South Korea": ["KR","Seoul","Korean Peninsula",51900000,100410],
+ "North Korea": ["KP","Pyongyang","Korean Peninsula",26500000,120538,null,"Population is an estimate; North Korea publishes almost no economic data"],
+ "Mongolia": ["MN","Ulaanbaatar","Mongolia",3580000,1564116],
+ "Taiwan": ["TW","Taipei","Taiwan",23300000,36197,null,"Governed as the Republic of China. The People's Republic of China claims it; most countries, including the UK, have unofficial relations with Taiwan rather than recognising it as a state"]
+}
