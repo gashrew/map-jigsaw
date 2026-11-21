@@ -52,7 +52,7 @@ export interface PieceDetails {
 
 export interface MapDetails {
   currency: string;                          // "C$", "£", "$"
-  gdpYear: number;
+  gdpYear: number | string;
   gdpSource: string;
   national: { label: string; gdp: number; gdpPerCap: number; totalLabel?: string }; // totalLabel: e.g. "Europe's total"
   searchSuffix?: string;                     // added to YouTube searches, e.g. "Canada"

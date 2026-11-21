@@ -26,6 +26,7 @@ export const MAP_GROUPS: { title: string; maps: MapEntry[] }[] = [
     { path: "/east-asia", label: "East Asia", flag: "🌏", subtitle: "6 pieces" },
     { path: "/south-central-asia", label: "South & Central Asia", flag: "🌏", subtitle: "13 countries" },
     { path: "/southeast-asia", label: "Southeast Asia", flag: "🌏", subtitle: "11 countries" },
+    { path: "/india", label: "India", flag: "🇮🇳", subtitle: "36 states and territories" },
   ] },
 ];
 

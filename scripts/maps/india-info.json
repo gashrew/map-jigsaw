@@ -1,0 +1,326 @@
+{
+ "Andaman and Nicobar": [
+  "AN",
+  "Sri Vijaya Puram",
+  "Eastern",
+  405000,
+  8249,
+  "Andaman and Nicobar Islands",
+  "Union territory. Its capital, Port Blair, was renamed Sri Vijaya Puram in 2024"
+ ],
+ "Andhra Pradesh": [
+  "AP",
+  "Amaravati",
+  "Southern",
+  53448000,
+  162968,
+  null,
+  null
+ ],
+ "Arunachal Pradesh": [
+  "AR",
+  "Itanagar",
+  "North East",
+  1583000,
+  83743,
+  null,
+  "China claims most of Arunachal Pradesh as part of Tibet"
+ ],
+ "Assam": [
+  "AS",
+  "Dispur",
+  "North East",
+  36226000,
+  78438,
+  null,
+  null
+ ],
+ "Bihar": [
+  "BR",
+  "Patna",
+  "Eastern",
+  129690000,
+  94163,
+  null,
+  null
+ ],
+ "Chandigarh": [
+  "CH",
+  "Chandigarh",
+  "Northern",
+  1250000,
+  114,
+  null,
+  "Union territory; it is also the capital of both Punjab and Haryana"
+ ],
+ "Chhattisgarh": [
+  "CG",
+  "Raipur",
+  "Central",
+  30724000,
+  135192,
+  null,
+  null
+ ],
+ "Dadra and Nagar Haveli and Daman and Diu": [
+  "DH",
+  "Daman",
+  "Western",
+  600000,
+  603,
+  null,
+  "Union territory formed in 2020 by merging two former Portuguese territories; population is approximate"
+ ],
+ "Delhi": [
+  "DL",
+  "New Delhi",
+  "Northern",
+  21982000,
+  1484,
+  null,
+  "National Capital Territory"
+ ],
+ "Goa": [
+  "GA",
+  "Panaji",
+  "Western",
+  1587000,
+  3702,
+  null,
+  null
+ ],
+ "Gujarat": [
+  "GJ",
+  "Gandhinagar",
+  "Western",
+  72868000,
+  196024,
+  null,
+  null
+ ],
+ "Haryana": [
+  "HR",
+  "Chandigarh",
+  "Northern",
+  31037000,
+  44212,
+  null,
+  null
+ ],
+ "Himachal Pradesh": [
+  "HP",
+  "Shimla",
+  "Northern",
+  7527000,
+  55673,
+  null,
+  null
+ ],
+ "Jammu and Kashmir": [
+  "JK",
+  "Srinagar / Jammu",
+  "Northern",
+  13758000,
+  42241,
+  null,
+  "Union territory since 2019. Srinagar is the summer capital and Jammu the winter capital. India also claims the parts of Kashmir held by Pakistan and China; the area shown is the part India administers"
+ ],
+ "Jharkhand": [
+  "JH",
+  "Ranchi",
+  "Eastern",
+  40253000,
+  79716,
+  null,
+  null
+ ],
+ "Karnataka": [
+  "KA",
+  "Bengaluru",
+  "Southern",
+  68362000,
+  191791,
+  null,
+  null
+ ],
+ "Kerala": [
+  "KL",
+  "Thiruvananthapuram",
+  "Southern",
+  36039000,
+  38863,
+  null,
+  null
+ ],
+ "Ladakh": [
+  "LA",
+  "Leh",
+  "Northern",
+  300000,
+  59146,
+  null,
+  "Union territory since 2019; population is approximate. India also claims Aksai Chin, held by China"
+ ],
+ "Lakshadweep": [
+  "LD",
+  "Kavaratti",
+  "Southern",
+  70000,
+  32,
+  null,
+  "Union territory; population is approximate"
+ ],
+ "Madhya Pradesh": [
+  "MP",
+  "Bhopal",
+  "Central",
+  88212000,
+  308252,
+  null,
+  null
+ ],
+ "Maharashtra": [
+  "MH",
+  "Mumbai",
+  "Western",
+  127928000,
+  307713,
+  null,
+  null
+ ],
+ "Manipur": [
+  "MN",
+  "Imphal",
+  "North East",
+  3267000,
+  22327,
+  null,
+  null
+ ],
+ "Meghalaya": [
+  "ML",
+  "Shillong",
+  "North East",
+  3425000,
+  22429,
+  null,
+  null
+ ],
+ "Mizoram": [
+  "MZ",
+  "Aizawl",
+  "North East",
+  1255000,
+  21081,
+  null,
+  null
+ ],
+ "Nagaland": [
+  "NL",
+  "Kohima",
+  "North East",
+  2309000,
+  16579,
+  null,
+  null
+ ],
+ "Odisha": [
+  "OD",
+  "Bhubaneswar",
+  "Eastern",
+  46736000,
+  155707,
+  null,
+  null
+ ],
+ "Puducherry": [
+  "PY",
+  "Puducherry",
+  "Southern",
+  1704000,
+  479,
+  null,
+  "Union territory made up of four former French enclaves"
+ ],
+ "Punjab": [
+  "PB",
+  "Chandigarh",
+  "Northern",
+  33106000,
+  50362,
+  null,
+  null
+ ],
+ "Rajasthan": [
+  "RJ",
+  "Jaipur",
+  "Northern",
+  82406000,
+  342239,
+  null,
+  null
+ ],
+ "Sikkim": [
+  "SK",
+  "Gangtok",
+  "North East",
+  698000,
+  7096,
+  null,
+  null
+ ],
+ "Tamil Nadu": [
+  "TN",
+  "Chennai",
+  "Southern",
+  77222000,
+  130058,
+  null,
+  null
+ ],
+ "Telangana": [
+  "TG",
+  "Hyderabad",
+  "Southern",
+  38363000,
+  112077,
+  null,
+  null
+ ],
+ "Tripura": [
+  "TR",
+  "Agartala",
+  "North East",
+  4203000,
+  10486,
+  null,
+  null
+ ],
+ "Uttar Pradesh": [
+  "UP",
+  "Lucknow",
+  "Central",
+  239472000,
+  240928,
+  null,
+  null
+ ],
+ "Uttarakhand": [
+  "UK",
+  "Dehradun",
+  "Central",
+  11824000,
+  53483,
+  null,
+  null
+ ],
+ "West Bengal": [
+  "WB",
+  "Kolkata",
+  "Eastern",
+  99843000,
+  88752,
+  null,
+  null
+ ]
+}

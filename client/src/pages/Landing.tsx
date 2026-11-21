@@ -13,6 +13,7 @@ import { MIDDLE_EAST, MIDDLE_EAST_CONTEXT, SVG_WIDTH as ME_W, SVG_HEIGHT as ME_H
 import { EAST_ASIA, EAST_ASIA_CONTEXT, SVG_WIDTH as EAST_ASIA_W, SVG_HEIGHT as EAST_ASIA_H } from "@/lib/eastAsiaData";
 import { SOUTH_CENTRAL_ASIA, SOUTH_CENTRAL_ASIA_CONTEXT, SVG_WIDTH as SOUTH_CENTRAL_ASIA_W, SVG_HEIGHT as SOUTH_CENTRAL_ASIA_H } from "@/lib/southCentralAsiaData";
 import { SOUTHEAST_ASIA, SOUTHEAST_ASIA_CONTEXT, SVG_WIDTH as SOUTHEAST_ASIA_W, SVG_HEIGHT as SOUTHEAST_ASIA_H } from "@/lib/southeastAsiaData";
+import { INDIA, INDIA_CONTEXT, SVG_WIDTH as IN_W, SVG_HEIGHT as IN_H } from "@/lib/indiaData";
 import { Link } from "wouter";
 
 // ─── Mini map previews ────────────────────────────────────────────────────────
@@ -164,6 +165,23 @@ function SoutheastAsiaMini() {
       <g transform={`translate(${ox},${oy}) scale(${sc})`}>
         {SOUTHEAST_ASIA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
         {SOUTHEAST_ASIA.map(c => (
+          <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function IndiaMini() {
+  const W = 180, H = 200;
+  const sc = Math.min(W / IN_W, H / IN_H) * 0.95;
+  const ox = (W - IN_W * sc) / 2;
+  const oy = (H - IN_H * sc) / 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ display: "block" }}>
+      <g transform={`translate(${ox},${oy}) scale(${sc})`}>
+        {INDIA_CONTEXT.map((d, i) => <path key={i} d={d} fill="#16243a" />)}
+        {INDIA.map(c => (
           <path key={c.id} d={c.path} fill={c.colour} stroke="#0f1b2d" strokeWidth="1.5" fillRule="evenodd" />
         ))}
       </g>
@@ -421,6 +439,17 @@ export default function Landing() {
           unit="countries"
           features={["Region colours", "Capitals", "Facts and economy", "Quiz mode"]}
           preview={<SoutheastAsiaMini />}
+          available={true}
+        />
+        <MapCard
+          href="/india"
+          flag="🇮🇳"
+          title="India"
+          subtitle="Natural Earth boundary data"
+          count={INDIA.length}
+          unit="states and territories"
+          features={["28 states + 8 union territories", "Region colours", "Capitals", "State GDP (MoSPI)", "Quiz mode"]}
+          preview={<IndiaMini />}
           available={true}
         />
         <MapCard

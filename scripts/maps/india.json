@@ -1,0 +1,15 @@
+{
+  "info": "india-info.json", "admin1": "India", "exportName": "INDIA",
+  "comment": "Lambert azimuthal equal-area centred on 82°E 22°N",
+  "rotate": [-82, -22], "window": [66, 99, 5, 38],
+  "keepAll": [], "frameExclude": [], "merge": {}, "labelAt": {},
+  "contextBox": [55, 110, 0, 45],
+  "shades": {
+    "Northern": ["#3a7abf", "#6aaae0", "#4a8fd4", "#8abce8", "#2a6aaf", "#5a9ad0"],
+    "Central": ["#5a4e9f", "#8a7ecf", "#7a6ebf", "#baaee0"],
+    "Eastern": ["#b8923a", "#d8b25a", "#a8822a", "#c9a24a"],
+    "North East": ["#1d8a70", "#3daa90", "#5dc4aa", "#0d7a60", "#2d9a80", "#7dd4ba"],
+    "Western": ["#c05a34", "#e07a54", "#d06a44", "#f08a64"],
+    "Southern": ["#b04a6a", "#d06a8a", "#c05a7a", "#e08aaa", "#a03a5a", "#e8a0b8"]
+  }
+}
