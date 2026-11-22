@@ -19,6 +19,7 @@ import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
 import { useGhostClickGuard } from "@/components/useGhostClickGuard";
 import { DetailsModal, Flag, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
+import { FindHud, FindResults, FindSetup, useFindGame, type FindLevel, type FindRound } from "@/components/FindGame";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -236,6 +237,16 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
     area: pathArea(s.path), region: s.region,
   })), [states, bboxes]);
   const deckLabelsBefore = useRef(true);
+
+  // "Find it" quiz: a name appears and the player taps where it is
+  const find = useFindGame(states, cfg.key, cfg.noun);
+  const findOn = !!find.game;
+  const [findSetup, setFindSetup] = useState(false);
+  const findLabelsBefore = useRef(true);
+  const hitPaths = useMemo(() => typeof Path2D === "undefined" ? {} : Object.fromEntries(states.map(s => [s.id, new Path2D(s.path)])), [states]);
+  const hitCtx = useMemo(() => typeof document === "undefined" ? null : document.createElement("canvas").getContext("2d"), []);
+  const tap = useRef<{ x: number; y: number; t: number } | null>(null);
+  const pointersDown = useRef(0);
   const [view,         setView]         = useState<ViewState>({ x: 0, y: 0, scale: 1 });
   // The scale when the map is fitted to the screen. With fixed-size text, text is as big
   // on screen as it is at that scale, however far you zoom in or out.
@@ -445,7 +456,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
   }
 
   function startDrag(e: React.MouseEvent | React.TouchEvent, id: string) {
-    if (deckOn) return; // in the one-at-a-time quiz, placed pieces stay put and the map pans
+    if (deckOn || findOn) return; // in the quizzes, placed pieces stay put and the map pans
     e.preventDefault();
     e.stopPropagation();
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
@@ -703,6 +714,61 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
     return () => clearTimeout(t);
   }, [deckOn, portrait]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  function startFind(level: FindLevel, round: FindRound) {
+    setFindSetup(false);
+    if (!findOn) findLabelsBefore.current = showLabels;
+    setShowLabels(false);
+    setSelectedId(null); setDetailsId(null); setTooltip(null);
+    // Every piece goes home (hidden until found) and the map is refitted
+    states.forEach(p => { pieceStates.current[p.id] = { tx: 0, ty: 0 }; });
+    setTrays(null);
+    resetView();
+    find.start(level, round);
+  }
+  function exitFind() {
+    find.stop();
+    setShowLabels(findLabelsBefore.current);
+  }
+  // The piece a point on the map is in (the smallest, if shapes overlap)
+  function pieceAt(wx: number, wy: number): string | null {
+    if (!hitCtx) return null;
+    let best: string | null = null, bestA = Infinity;
+    for (const s of states) {
+      const b = bboxes[s.id];
+      if (wx < b.minX || wy < b.minY || wx > b.minX + b.w || wy > b.minY + b.h) continue;
+      if (hitCtx.isPointInPath(hitPaths[s.id], wx, wy, "evenodd") && b.w * b.h < bestA) { best = s.id; bestA = b.w * b.h; }
+    }
+    return best;
+  }
+  function findTap(clientX: number, clientY: number) {
+    const target = find.target, el = canvasRef.current;
+    if (!target || !el || !hitCtx) return;
+    const r = el.getBoundingClientRect(), v = viewRef.current;
+    const wx = (clientX - r.left - v.x) / v.scale, wy = (clientY - r.top - v.y) / v.scale;
+    const hit = pieceAt(wx, wy);
+    // Small places on screen also count when the tap is just outside them
+    const b = bboxes[target], t = states.find(s => s.id === target)!;
+    const tol = (isTouch ? 24 : 14) / v.scale;
+    let near = false;
+    if (hit !== target && Math.max(b.w, b.h) * v.scale < 60) {
+      hitCtx.lineWidth = tol * 2;
+      near = hitCtx.isPointInStroke(hitPaths[target], wx, wy) || Math.hypot(wx - t.cx, wy - t.cy) < tol;
+    }
+    find.guess(hit, near);
+  }
+  // Flash a placed piece green
+  useEffect(() => {
+    const m = find.mark;
+    if (!m || m.kind !== "right" || !m.id) return;
+    const id = m.id;
+    requestAnimationFrame(() => {
+      applyTransform(id);
+      if (flashTimer.current) clearTimeout(flashTimer.current);
+      setFlash({ id, type: "correct" });
+      flashTimer.current = setTimeout(() => setFlash(null), 500);
+    });
+  }, [find.mark]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function exitQuiz() {
     if (quizTimerRef.current) { clearInterval(quizTimerRef.current); quizTimerRef.current = null; }
     setQuiz({ active: false, placed: new Set(), startTime: 0, endTime: null });
@@ -742,7 +808,13 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
-          {deckOn ? (
+          {findOn ? (
+            <>
+              <div style={{ fontSize: "0.85rem", color: "#e0c97f", fontFamily: "Inter, sans-serif", display: window.innerWidth < 600 ? "none" : undefined }}>Find it — tap where each {cfg.noun} is</div>
+              <CtaButton onClick={resetView} secondary>Reset view</CtaButton>
+              <CtaButton onClick={exitFind} secondary>Exit quiz</CtaButton>
+            </>
+          ) : deckOn ? (
             <div style={{ fontSize: "0.85rem", color: "#e0c97f", fontFamily: "Inter, sans-serif", display: window.innerWidth < 600 ? "none" : undefined }}>One at a time — drag each piece from the box onto the map</div>
           ) : !quiz.active ? (
             <>
@@ -760,7 +832,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
               <Divider />
               <ToggleLabel label="Snap" checked={snapEnabled} onChange={setSnapEnabled} />
               <Divider />
-              <CtaButton onClick={startQuiz}>Quiz mode</CtaButton>
+              <CtaButton onClick={() => setFindSetup(true)}>Find it quiz</CtaButton>
               <CtaButton onClick={startDeck}>One at a time</CtaButton>
             </>
           ) : (
@@ -786,6 +858,19 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
         style={{ flex: 1, minWidth: 0, minHeight: 0, position: "relative", overflow: "hidden", cursor: "default" }}
         onMouseDown={startPan}
         onTouchStart={startPanTouch}
+        onPointerDown={e => {
+          if ((e.target as Element).closest?.("[data-ui]")) return;
+          pointersDown.current++;
+          tap.current = pointersDown.current === 1 ? { x: e.clientX, y: e.clientY, t: Date.now() } : null;
+        }}
+        onPointerUp={e => {
+          if ((e.target as Element).closest?.("[data-ui]")) return;
+          pointersDown.current = Math.max(0, pointersDown.current - 1);
+          const t = tap.current; tap.current = null;
+          // Only a quick, still tap is a guess (not a drag of the map or a pinch)
+          if (findOn && t && Math.hypot(e.clientX - t.x, e.clientY - t.y) < 10 && Date.now() - t.t < 700) findTap(e.clientX, e.clientY);
+        }}
+        onPointerCancel={() => { pointersDown.current = Math.max(0, pointersDown.current - 1); tap.current = null; }}
       >
         {/* Trays the scattered pieces sit in (hidden once the map is moved) */}
         {trays && trayView.current === view && (
@@ -805,8 +890,34 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
           </svg>
         )}
 
+        {/* Find it quiz: the map to tap on */}
+        {findOn && find.game && (() => {
+          const lv = find.game.level, k = 1 / view.scale, m = find.mark;
+          const shown = (id: string) => find.game!.found.has(id);
+          return (
+            <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
+              <g transform={`translate(${view.x},${view.y}) scale(${view.scale})`}>
+                {lv === "easy" && states.map(s => <path key={s.id} data-find={s.id} data-name={s.name} data-cx={s.cx} data-cy={s.cy} d={s.path} fill="#1c2d48" stroke="#5a7898" strokeWidth={0.9} vectorEffect="non-scaling-stroke" fillRule="evenodd" />)}
+                {lv === "medium" && <>
+                  {states.map(s => <path key={s.id} data-find={s.id} data-name={s.name} data-cx={s.cx} data-cy={s.cy} d={s.path} fill="#1c2d48" stroke="#7a98b8" strokeWidth={3} strokeLinejoin="round" vectorEffect="non-scaling-stroke" fillRule="evenodd" />)}
+                  {states.map(s => <path key={"f" + s.id} d={s.path} fill="#1c2d48" stroke="#1c2d48" strokeWidth={1} vectorEffect="non-scaling-stroke" fillRule="evenodd" />)}
+                </>}
+                {lv === "hard" && states.map(s => !shown(s.id) && <circle key={s.id} data-find={s.id} data-name={s.name} data-cx={s.cx} data-cy={s.cy} cx={s.cx} cy={s.cy} r={4 * k} fill="rgba(90,120,152,0.6)" stroke="#7a98b8" strokeWidth={1} vectorEffect="non-scaling-stroke" />)}
+                {lv !== "hard" && states.filter(s => !shown(s.id) && Math.max(bboxes[s.id].w, bboxes[s.id].h) * view.scale < TINY_PX).map(s => (
+                  <circle key={"ring-" + s.id} cx={bboxes[s.id].cx} cy={bboxes[s.id].cy} r={RING_PX * k}
+                    fill="none" stroke="rgba(122,152,184,0.7)" strokeWidth={1.2} strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
+                ))}
+                {/* A wrong tap shows where the tapped place really is */}
+                {m?.kind === "wrong" && m.id && !shown(m.id) && (() => { const w = states.find(s => s.id === m.id)!; return (
+                  <path key={m.n} d={w.path} fill="rgba(220,60,60,0.35)" stroke="#e04040" strokeWidth={1.5} vectorEffect="non-scaling-stroke" fillRule="evenodd" style={{ animation: "findFade 1.6s ease-out forwards" }} />
+                ); })()}
+              </g>
+            </svg>
+          );
+        })()}
+
         {/* Ghost reference */}
-        {showGhost && (
+        {showGhost && !findOn && (
           <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
             <g transform={`translate(${view.x},${view.y}) scale(${view.scale})`}>
               {states.map(s => (
@@ -822,7 +933,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
         )}
 
         {/* Dot map — centroid targets only */}
-        {showDotMap && (
+        {showDotMap && !findOn && (
           <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
             <g transform={`translate(${view.x},${view.y}) scale(${view.scale})`}>
               {states.map(s => {
@@ -862,11 +973,11 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
                 key={s.id}
                 ref={el => { pieceRefs.current[s.id] = el; }}
                 data-piece={s.id}
-                style={{ cursor: deckOn ? "default" : "grab", display: deckOn && !deckPlaced.has(s.id) ? "none" : undefined }}
+                style={{ cursor: deckOn ? "default" : "grab", display: (deckOn && !deckPlaced.has(s.id)) || (findOn && !find.game!.found.has(s.id)) ? "none" : undefined }}
                 onMouseDown={e => startDrag(e, s.id)}
                 onTouchStart={e => startDrag(e, s.id)}
                 onDoubleClick={() => setZOrder(prev => [...prev.filter(x => x !== s.id), s.id])}
-                onMouseEnter={e => setTooltip({ name: s.name, x: e.clientX, y: e.clientY })}
+                onMouseEnter={e => { if (!findOn) setTooltip({ name: s.name, x: e.clientX, y: e.clientY }); }}
                 onMouseMove={e => setTooltip(t => t ? { ...t, x: e.clientX, y: e.clientY } : null)}
                 onMouseLeave={() => setTooltip(null)}
               >
@@ -874,6 +985,9 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
                 {bboxes[s.id].w < SMALL_PIECE && bboxes[s.id].h < SMALL_PIECE && (
                   <path d={s.path} fill="none" stroke="transparent" strokeWidth={28}
                     strokeLinejoin="round" vectorEffect="non-scaling-stroke" pointerEvents="stroke" />
+                )}
+                {findOn && find.mark?.kind === "reveal" && find.mark.id === s.id && (
+                  <path d={s.path} fill="none" stroke="#ffb74d" strokeWidth={4} vectorEffect="non-scaling-stroke" style={{ animation: "findPulse 0.6s ease-in-out 3" }} />
                 )}
                 <path
                   className="area-fill"
@@ -942,7 +1056,8 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
         </svg>
 
         {regionColour && !quiz.active && <RegionLegend colours={REGION_COLOURS} />}
-        {selectedId && !quiz.active && <InfoPanel id={selectedId} cfg={cfg} onClose={() => setSelectedId(null)} onMore={() => setDetailsId(selectedId)} />}
+        {findOn && find.game && <FindHud game={find.game} name={find.target ? find.nameOf(find.target) : ""} mark={find.mark} onReveal={find.reveal} onExit={exitFind} />}
+        {selectedId && !quiz.active && !findOn && <InfoPanel id={selectedId} cfg={cfg} onClose={() => setSelectedId(null)} onMore={() => setDetailsId(selectedId)} />}
 
         {/* Flash overlay for correct / wrong placement */}
         {flash && (() => {
@@ -1021,7 +1136,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
           background: "rgba(22,33,62,0.7)", border: "1px solid rgba(58,80,112,0.5)",
           color: "#3a5070", fontSize: "0.7rem", pointerEvents: "none", whiteSpace: "nowrap",
         }}>
-          {deckOn ? <>Drag the piece from the box onto its outline &bull; {isTouch ? "Drag the background to move the map • Pinch to zoom" : "Drag the background to move the map • Scroll to zoom • Arrow keys change piece"}</> : isTouch ? <>Drag pieces with a finger &bull; Drag the background to move the map &bull; Pinch to zoom &bull; Tap a piece for details</> : <>Scroll to zoom &bull; Drag canvas to pan &bull; Click a piece for details &bull; Double-click to bring to front</>}
+          {findOn ? <>Tap where the {cfg.noun} is &bull; {isTouch ? "Drag to move the map • Pinch to zoom" : "Drag to move the map • Scroll to zoom"}</> : deckOn ? <>Drag the piece from the box onto its outline &bull; {isTouch ? "Drag the background to move the map • Pinch to zoom" : "Drag the background to move the map • Scroll to zoom • Arrow keys change piece"}</> : isTouch ? <>Drag pieces with a finger &bull; Drag the background to move the map &bull; Pinch to zoom &bull; Tap a piece for details</> : <>Scroll to zoom &bull; Drag canvas to pan &bull; Click a piece for details &bull; Double-click to bring to front</>}
         </div>
       </div>
       {deckOn && (
@@ -1030,6 +1145,12 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
           onDrop={deckDrop} onRestart={restartDeck} onExit={exitDeck} />
       )}
       </div>
+
+      {findSetup && <FindSetup cfg={cfg} onStart={startFind} onClose={() => setFindSetup(false)} />}
+      {find.game?.end && (
+        <FindResults game={find.game} nameOf={find.nameOf} newBest={find.newBest} mapKey={cfg.key}
+          onAgain={() => { exitFind(); setFindSetup(true); }} onClose={exitFind} />
+      )}
 
       {detailsId && cfg.details && (() => {
         const p = states.find(x => x.id === detailsId);
@@ -1042,6 +1163,8 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
           60%  { opacity: 0.8; }
           100% { opacity: 0; }
         }
+        @keyframes findFade { 0% { opacity: 1; } 70% { opacity: 0.8; } 100% { opacity: 0; } }
+        @keyframes findPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
         @keyframes panelIn {
           from { opacity: 0; transform: translateY(-6px) scale(0.97); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
