@@ -27,7 +27,6 @@ function LivingSection({ s }: { s: LivingStats }) {
   return (
     <Section title="People and living standards (2023)">
       <Fact label="Life expectancy at birth" value={`${s.le.toFixed(1)} years (men ${s.leM.toFixed(1)}, women ${s.leF.toFixed(1)}) — world ${WORLD_LIVING.le.toFixed(1)}`} />
-      <Fact label="Median age" value={`${s.median.toFixed(1)} years — world ${WORLD_LIVING.median.toFixed(1)}`} />
       <Fact label="Children per woman" value={`${s.tfr.toFixed(1)} — world ${WORLD_LIVING.tfr.toFixed(1)}`} />
       <Fact label="Human Development Index" value={s.hdi != null ? `${s.hdi.toFixed(3)} — ${hdiBand(s.hdi)}, ${ordinalN(s.hdiRank!)} of 193` : "Not published by the UN for this place"} />
     </Section>
@@ -288,7 +287,7 @@ export function DetailsModal({ piece, cfg, onClose, onPick }: { piece: MapPiece;
           </Section>
 
           <div style={{ fontSize: "0.62rem", color: MUTED, marginTop: 14, lineHeight: 1.5 }}>
-            Economic figures: {d.gdpSource}.{livingOf(cfg.key, piece.id) ? " Life expectancy and children per woman: UN World Population Prospects 2024; median age worked out from its population by age. Human Development Index: UNDP Human Development Report 2025, which ranks 193 countries from 0 to 1 on health, education and income." : ""} Population: {cfg.popLabel.replace(/^Population ?/, "").replace(/[()]/g, "") || "latest estimate"}.
+            Economic figures: {d.gdpSource}.{livingOf(cfg.key, piece.id) ? " Life expectancy and children per woman: UN World Population Prospects 2024. Human Development Index: UNDP Human Development Report 2025, which ranks 193 countries from 0 to 1 on health, education and income." : ""} Population: {cfg.popLabel.replace(/^Population ?/, "").replace(/[()]/g, "") || "latest estimate"}.
           </div>
         </div>
       </div>
