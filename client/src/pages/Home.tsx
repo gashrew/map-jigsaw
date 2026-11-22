@@ -19,6 +19,7 @@ import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDe
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
 import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
 import { useGhostClickGuard } from "@/components/useGhostClickGuard";
+import { NeighbourRow } from "@/components/JigsawMap";
 import { DetailsModal, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
 import { ENGLAND_DETAILS_BASE, ENGLAND_DETAILS_BY_NAME } from "@/lib/englandDetails";
 import type { MapConfig, MapPiece } from "@/lib/mapTypes";
@@ -118,7 +119,7 @@ function CompassRose() {
 
 // ─── Info Panel ───────────────────────────────────────────────────────────────
 
-function InfoPanel({ id, onClose, onMore }: { id: string; onClose: () => void; onMore: () => void }) {
+function InfoPanel({ id, onClose, onMore, onPick }: { id: string; onClose: () => void; onMore: () => void; onPick: (id: string) => void }) {
   const guard = useGhostClickGuard(id);
   const area = RAW_AREAS.find(a => a.id === id);
   if (!area) return null;
@@ -169,6 +170,7 @@ function InfoPanel({ id, onClose, onMore }: { id: string; onClose: () => void; o
         <div style={{ padding: "10px 12px" }}>
           <Row label="Principal town" value={info.town} />
           <Row label="Region" value={info.region} />
+          <NeighbourRow cfg={ENGLAND_CFG} id={area.id} onPick={onPick} />
           {stats && (
             <>
               <Row label="Population (2021)" value={fmtPop(stats.pop)} />
@@ -899,7 +901,7 @@ export default function Home() {
 
         {/* Info panel — hidden during quiz */}
         {selectedId && !quiz.active && (
-          <InfoPanel id={selectedId} onClose={() => setSelectedId(null)} onMore={() => setDetailsId(selectedId)} />
+          <InfoPanel id={selectedId} onClose={() => setSelectedId(null)} onMore={() => setDetailsId(selectedId)} onPick={setSelectedId} />
         )}
 
         {/* Quiz results overlay */}
@@ -989,7 +991,7 @@ export default function Home() {
 
       {detailsId && (() => {
         const p = ENGLAND_PIECES.find(x => x.id === detailsId);
-        return p ? <DetailsModal piece={p} cfg={ENGLAND_CFG} onClose={() => setDetailsId(null)} /> : null;
+        return p ? <DetailsModal piece={p} cfg={ENGLAND_CFG} onClose={() => setDetailsId(null)} onPick={id => { setDetailsId(id); setSelectedId(id); }} /> : null;
       })()}
 
       <style>{`

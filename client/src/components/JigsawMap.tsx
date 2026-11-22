@@ -17,7 +17,7 @@ import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView,
 import { pathArea } from "@/lib/touch";
 import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
 import { useGhostClickGuard } from "@/components/useGhostClickGuard";
-import { DetailsModal, Flag, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
+import { DetailsModal, Neighbours, Flag, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 import { FindHud, FindResults, FindSetup, useFindGame, type FindLevel, type FindRound } from "@/components/FindGame";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
@@ -64,7 +64,7 @@ function RegionLegend({ colours }: { colours: Record<string, string> }) {
 }
 
 // ─── Info Panel ───────────────────────────────────────────────────────────────
-function InfoPanel({ id, cfg, onClose, onMore }: { id: string; cfg: MapConfig; onClose: () => void; onMore: () => void }) {
+function InfoPanel({ id, cfg, onClose, onMore, onPick }: { id: string; cfg: MapConfig; onClose: () => void; onMore: () => void; onPick: (id: string) => void }) {
   const guard = useGhostClickGuard(id);
   const state = cfg.pieces.find(s => s.id === id);
   if (!state) return null;
@@ -110,6 +110,7 @@ function InfoPanel({ id, cfg, onClose, onMore }: { id: string; cfg: MapConfig; o
         <Row label={cfg.capitalLabel} value={state.capital} />
         {x?.largestCity && !x.largestCity.startsWith(state.capital) && <Row label="Largest city" value={x.largestCity} />}
         <Row label="Region"           value={state.region} />
+        <NeighbourRow cfg={cfg} id={state.id} onPick={onPick} />
         <Row label={cfg.popLabel}     value={fmtPop(state.pop)} />
         <Row label={cfg.areaLabel}    value={state.area_km2.toLocaleString() + " km²"} />
         {(() => {
@@ -1057,7 +1058,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
 
         {regionColour && !quiz.active && <RegionLegend colours={REGION_COLOURS} />}
         {findOn && find.game && <FindHud game={find.game} name={find.target ? find.nameOf(find.target) : ""} mark={find.mark} onReveal={find.reveal} onExit={exitFind} />}
-        {selectedId && !quiz.active && !findOn && <InfoPanel id={selectedId} cfg={cfg} onClose={() => setSelectedId(null)} onMore={() => setDetailsId(selectedId)} />}
+        {selectedId && !quiz.active && !findOn && <InfoPanel id={selectedId} cfg={cfg} onClose={() => setSelectedId(null)} onMore={() => setDetailsId(selectedId)} onPick={setSelectedId} />}
 
         {/* Flash overlay for correct / wrong placement */}
         {flash && (() => {
@@ -1154,7 +1155,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
 
       {detailsId && cfg.details && (() => {
         const p = states.find(x => x.id === detailsId);
-        return p ? <DetailsModal piece={p} cfg={cfg} onClose={() => setDetailsId(null)} /> : null;
+        return p ? <DetailsModal piece={p} cfg={cfg} onClose={() => setDetailsId(null)} onPick={id => { setDetailsId(id); setSelectedId(id); }} /> : null;
       })()}
 
       <style>{`
@@ -1185,6 +1186,14 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
 }
 
 // ─── Small UI components ──────────────────────────────────────────────────────
+export function NeighbourRow({ cfg, id, onPick }: { cfg: MapConfig; id: string; onPick: (id: string) => void }) {
+  return (
+    <div style={{ marginBottom: 7 }}>
+      <div style={{ fontSize: "0.62rem", color: "#4a6080", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 3 }}>Borders</div>
+      <Neighbours cfg={cfg} id={id} onPick={onPick} />
+    </div>
+  );
+}
 function ToggleLabel({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <label style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.74rem", color: "#8899aa", cursor: "pointer", whiteSpace: "nowrap" }}>

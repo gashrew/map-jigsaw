@@ -4,6 +4,28 @@
  */
 import { useEffect, useState } from "react";
 import type { MapConfig, MapDetails, MapPiece, PieceDetails } from "@/lib/mapTypes";
+import { NEIGHBOURS } from "@/lib/neighbours";
+
+// Places sharing a land border: ones on this map can be tapped to go to them
+export function Neighbours({ cfg, id, onPick, size = "small" }: { cfg: MapConfig; id: string; onPick?: (id: string) => void; size?: "small" | "large" }) {
+  const list = NEIGHBOURS[cfg.key]?.[id];
+  if (!list) return null;
+  const fs = size === "large" ? "0.78rem" : "0.7rem";
+  const onMap = list.filter(x => x[0] !== "~").map(x => ({ id: x, name: cfg.pieces.find(p => p.id === x)?.name ?? x })).sort((a, b) => a.name.localeCompare(b.name));
+  const off = list.filter(x => x[0] === "~").map(x => x.slice(1));
+  if (!onMap.length && !off.length) return <span style={{ fontSize: fs, color: "#8899aa" }}>No land borders</span>;
+  const chip: React.CSSProperties = { fontSize: fs, padding: size === "large" ? "3px 10px" : "1px 7px", borderRadius: 12, lineHeight: 1.5, fontFamily: "Inter, sans-serif" };
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+      {onMap.map(n => (
+        <button key={n.id} onClick={() => onPick?.(n.id)} title={`Go to ${n.name}`} style={{ ...chip, cursor: onPick ? "pointer" : "default", color: "#dde6f0", background: "rgba(224,201,127,0.1)", border: "1px solid rgba(224,201,127,0.3)" }}>{n.name}</button>
+      ))}
+      {off.map(n => (
+        <span key={n} title="Not on this map" style={{ ...chip, color: "#8899aa", border: "1px dashed rgba(255,255,255,0.18)" }}>{n}</span>
+      ))}
+    </div>
+  );
+}
 
 const GOLD = "#e0c97f", MUTED = "#4a6080", TEXT = "#c8d8e8";
 
@@ -76,7 +98,7 @@ export function LinkChips({ links }: { links: ReturnType<typeof pieceLinks> }) {
 }
 
 // ─── Larger panel ─────────────────────────────────────────────────────────────
-export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: MapConfig; onClose: () => void }) {
+export function DetailsModal({ piece, cfg, onClose, onPick }: { piece: MapPiece; cfg: MapConfig; onClose: () => void; onPick?: (id: string) => void }) {
   const d = cfg.details!;
   const x = d.pieces[piece.id];
   useEffect(() => {
@@ -136,6 +158,12 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
               <Fact label={cfg.areaLabel} value={piece.area_km2.toLocaleString() + " km²"} />
               <Fact label="People per km²" value={density < 1 ? density.toFixed(2) : density < 10 ? density.toFixed(1) : Math.round(density).toLocaleString()} />
               {x.identity?.map(f => <Fact key={f.label} label={f.label} value={f.value} />)}
+              {NEIGHBOURS[cfg.key]?.[piece.id] && (
+                <div style={{ marginBottom: 8 }}>
+                  <div style={labelStyle}>Borders</div>
+                  <Neighbours cfg={cfg} id={piece.id} onPick={onPick} size="large" />
+                </div>
+              )}
             </Section>
 
             {/* Economy */}
