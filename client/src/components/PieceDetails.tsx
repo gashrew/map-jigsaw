@@ -2,7 +2,7 @@
  * Educational extras for a map piece: links, economy comparison and the
  * larger "More details" panel.
  */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { MapConfig, MapDetails, MapPiece, PieceDetails } from "@/lib/mapTypes";
 
 const GOLD = "#e0c97f", MUTED = "#4a6080", TEXT = "#c8d8e8";
@@ -46,6 +46,7 @@ export function pieceLinks(p: MapPiece, x: PieceDetails, d: MapDetails) {
   return [
     { label: "Wikipedia", icon: "W", url: `https://en.wikipedia.org/wiki/${x.wiki}`, note: "Encyclopedia article" },
     ...(x.official ? [{ label: "Official site", icon: "🏛", url: x.official, note: "Government website" }] : []),
+    { label: "YouTube", icon: "▶", url: yt(""), note: "Search all videos" },
     { label: "YouTube: travel", icon: "▶", url: yt("travel guide"), note: "Travel guides and tours" },
     { label: "YouTube: history", icon: "▶", url: yt("history"), note: "History documentaries" },
     { label: (d.news ?? BBC).label, icon: "📰", url: (d.news ?? BBC).url(q), note: "Latest news" },
@@ -95,7 +96,11 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
   const meId = d.regional ? piece.region : piece.id;
   const max = Math.max(...ranked.map(r => r.v), d.national.gdpPerCap);
   const rank = ranked.findIndex(r => r.id === meId) + 1;
-  const labelW = d.regional ? 150 : 22;
+  const [names, setNames] = useState(() => { try { return localStorage.getItem("chartNames") === "1"; } catch { return false; } });
+  const toggleNames = (v: boolean) => { setNames(v); try { localStorage.setItem("chartNames", v ? "1" : "0"); } catch { /* ignore */ } };
+  const nameOf = Object.fromEntries(cfg.pieces.map(p => [p.id, p.name]));
+  const showNames = names && !d.regional;
+  const labelW = d.regional ? 150 : showNames ? 128 : 22;
 
   return (
     <div onPointerDown={e => { if (e.target === e.currentTarget) onClose(); }} style={{
@@ -144,11 +149,22 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
               {d.econNote && <div style={{ fontSize: "0.7rem", color: "#8899aa", marginBottom: 8, fontStyle: "italic" }}>{d.econNote}</div>}
               {ranked.length > 1 && (
                 <div style={{ margin: "4px 0 10px" }} aria-label="GDP per person compared">
+                  {!d.regional && (
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: 4, marginBottom: 4 }}>
+                      {[["Codes", false], ["Names", true]].map(([t, v]) => (
+                        <button key={t as string} onClick={() => toggleNames(v as boolean)} style={{
+                          fontSize: "0.62rem", padding: "1px 8px", borderRadius: 10, cursor: "pointer",
+                          border: "1px solid rgba(224,201,127,0.3)", fontFamily: "Inter, sans-serif",
+                          background: showNames === v ? "rgba(224,201,127,0.2)" : "transparent", color: showNames === v ? GOLD : MUTED,
+                        }}>{t as string}</button>
+                      ))}
+                    </div>
+                  )}
                   {ranked.map(r => {
                     const me = r.id === meId;
                     return (
                       <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 6, height: 14, fontSize: "0.62rem" }}>
-                        <span style={{ width: labelW, flexShrink: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: me ? GOLD : MUTED, fontWeight: me ? 700 : 400 }}>{r.label}</span>
+                        <span style={{ width: labelW, flexShrink: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: me ? GOLD : MUTED, fontWeight: me ? 700 : 400 }} title={nameOf[r.id] ?? r.label}>{showNames ? nameOf[r.id] : r.label}</span>
                         <div style={{ flex: 1, position: "relative", height: 8 }}>
                           <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${(r.v / max) * 100}%`, background: me ? GOLD : "rgba(106,138,170,0.45)", borderRadius: 2 }} />
                           <div style={{ position: "absolute", left: `${(d.national.gdpPerCap / max) * 100}%`, top: -3, bottom: -3, borderLeft: "1px dashed rgba(255,255,255,0.45)" }} />
@@ -156,7 +172,7 @@ export function DetailsModal({ piece, cfg, onClose }: { piece: MapPiece; cfg: Ma
                       </div>
                     );
                   })}
-                  <div style={{ fontSize: "0.62rem", color: MUTED, marginTop: 4 }}>Dashed line: {d.national.label} average</div>
+                  <div style={{ fontSize: "0.62rem", color: MUTED, marginTop: 4 }}>Dashed line: {d.national.label}{/average$/.test(d.national.label) ? "" : " average"}</div>
                 </div>
               )}
               {x.industries && (
