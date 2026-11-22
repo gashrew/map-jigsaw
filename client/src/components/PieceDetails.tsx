@@ -5,11 +5,20 @@
 import { useEffect, useState } from "react";
 import type { MapConfig, MapDetails, MapPiece, PieceDetails } from "@/lib/mapTypes";
 import { NEIGHBOURS } from "@/lib/neighbours";
-import { LIVING_CODE, LIVING_STATS, WORLD_LIVING, type LivingStats } from "@/lib/livingStandards";
+import { LIVING_CODE, LIVING_STATS, SUB_LIVING, WORLD_LIVING, type LivingStats } from "@/lib/livingStandards";
 
 export function livingOf(mapKey: string, id: string): LivingStats | null {
   const c = LIVING_CODE[mapKey]?.[id];
   return c ? LIVING_STATS[c] ?? null : null;
+}
+// Life expectancy for a state or province, with how it compares and ranks on the map
+export function subLifeOf(mapKey: string, id: string) {
+  const t = SUB_LIVING[mapKey], v = t?.pieces[id];
+  if (!t || !v) return null;
+  const all = Object.values(t.pieces), key = v.le != null ? "le" : "leF";
+  const rank = all.filter(o => (o[key] ?? 0) > (v[key] ?? 0)).length + 1;
+  const text = v.le != null ? `${v.le.toFixed(1)} years` : `men ${v.leM.toFixed(1)}, women ${v.leF.toFixed(1)} years`;
+  return { t, v, rank, n: all.length, text };
 }
 const hdiBand = (v: number) => v >= 0.8 ? "very high" : v >= 0.7 ? "high" : v >= 0.55 ? "medium" : "low";
 const ordinalN = (n: number) => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] ?? "th");
@@ -234,6 +243,19 @@ export function DetailsModal({ piece, cfg, onClose, onPick }: { piece: MapPiece;
           </div>
 
           {(() => { const s = livingOf(cfg.key, piece.id); return s ? <LivingSection s={s} /> : null; })()}
+          {(() => {
+            const r = subLifeOf(cfg.key, piece.id);
+            if (!r) return null;
+            const { t, v } = r, nat = t.national;
+            return (
+              <Section title={`Life expectancy (${t.period})`}>
+                {v.le != null && <Fact label="At birth" value={`${v.le.toFixed(1)} years — ${t.nationalLabel} ${nat.le!.toFixed(1)}, ${ordinalN(r.rank)} of ${r.n}`} />}
+                <Fact label="Men" value={`${v.leM.toFixed(1)} years — ${t.nationalLabel} ${nat.leM.toFixed(1)}`} />
+                <Fact label="Women" value={`${v.leF.toFixed(1)} years — ${t.nationalLabel} ${nat.leF.toFixed(1)}${v.le == null ? `, ${ordinalN(r.rank)} of ${r.n}` : ""}`} />
+                <div style={{ fontSize: "0.62rem", color: MUTED }}>Source: {t.source}</div>
+              </Section>
+            );
+          })()}
 
           {x.places && (
             <Section title="Places to know">
