@@ -5,6 +5,25 @@
 import { useEffect, useState } from "react";
 import type { MapConfig, MapDetails, MapPiece, PieceDetails } from "@/lib/mapTypes";
 import { NEIGHBOURS } from "@/lib/neighbours";
+import { LIVING_CODE, LIVING_STATS, WORLD_LIVING, type LivingStats } from "@/lib/livingStandards";
+
+export function livingOf(mapKey: string, id: string): LivingStats | null {
+  const c = LIVING_CODE[mapKey]?.[id];
+  return c ? LIVING_STATS[c] ?? null : null;
+}
+const hdiBand = (v: number) => v >= 0.8 ? "very high" : v >= 0.7 ? "high" : v >= 0.55 ? "medium" : "low";
+const ordinalN = (n: number) => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] ?? "th");
+
+function LivingSection({ s }: { s: LivingStats }) {
+  return (
+    <Section title="People and living standards (2023)">
+      <Fact label="Life expectancy at birth" value={`${s.le.toFixed(1)} years (men ${s.leM.toFixed(1)}, women ${s.leF.toFixed(1)}) — world ${WORLD_LIVING.le.toFixed(1)}`} />
+      <Fact label="Median age" value={`${s.median.toFixed(1)} years — world ${WORLD_LIVING.median.toFixed(1)}`} />
+      <Fact label="Children per woman" value={`${s.tfr.toFixed(1)} — world ${WORLD_LIVING.tfr.toFixed(1)}`} />
+      <Fact label="Human Development Index" value={s.hdi != null ? `${s.hdi.toFixed(3)} — ${hdiBand(s.hdi)}, ${ordinalN(s.hdiRank!)} of 193` : "Not published by the UN for this place"} />
+    </Section>
+  );
+}
 
 // Places sharing a land border: ones on this map can be tapped to go to them
 export function Neighbours({ cfg, id, onPick, size = "small" }: { cfg: MapConfig; id: string; onPick?: (id: string) => void; size?: "small" | "large" }) {
@@ -214,6 +233,8 @@ export function DetailsModal({ piece, cfg, onClose, onPick }: { piece: MapPiece;
             </Section>
           </div>
 
+          {(() => { const s = livingOf(cfg.key, piece.id); return s ? <LivingSection s={s} /> : null; })()}
+
           {x.places && (
             <Section title="Places to know">
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -245,7 +266,7 @@ export function DetailsModal({ piece, cfg, onClose, onPick }: { piece: MapPiece;
           </Section>
 
           <div style={{ fontSize: "0.62rem", color: MUTED, marginTop: 14, lineHeight: 1.5 }}>
-            Economic figures: {d.gdpSource}. Population: {cfg.popLabel.replace(/^Population ?/, "").replace(/[()]/g, "") || "latest estimate"}.
+            Economic figures: {d.gdpSource}.{livingOf(cfg.key, piece.id) ? " Life expectancy and children per woman: UN World Population Prospects 2024; median age worked out from its population by age. Human Development Index: UNDP Human Development Report 2025, which ranks 193 countries from 0 to 1 on health, education and income." : ""} Population: {cfg.popLabel.replace(/^Population ?/, "").replace(/[()]/g, "") || "latest estimate"}.
           </div>
         </div>
       </div>

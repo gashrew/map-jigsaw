@@ -17,7 +17,7 @@ import { SMALL_PIECE, bySizeDescending, fitView, pathBBox, pinchInfo, pinchView,
 import { pathArea } from "@/lib/touch";
 import { TextSizeButton, useTextSizes } from "@/components/TextSizes";
 import { useGhostClickGuard } from "@/components/useGhostClickGuard";
-import { DetailsModal, Neighbours, Flag, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
+import { livingOf, DetailsModal, Neighbours, Flag, LinkChips, econOf, fmtGdp, pieceLinks, vsNational } from "@/components/PieceDetails";
 import PieceDeck, { type DeckItem, TINY_PX, RING_PX } from "@/components/PieceDeck";
 import { FindHud, FindResults, FindSetup, useFindGame, type FindLevel, type FindRound } from "@/components/FindGame";
 const isTouch = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
@@ -112,6 +112,7 @@ function InfoPanel({ id, cfg, onClose, onMore, onPick }: { id: string; cfg: MapC
         <Row label="Region"           value={state.region} />
         <NeighbourRow cfg={cfg} id={state.id} onPick={onPick} />
         <Row label={cfg.popLabel}     value={fmtPop(state.pop)} />
+        {(() => { const s = livingOf(cfg.key, state.id); return s ? <Row label="Life expectancy (2023)" value={`${s.le.toFixed(1)} years`} /> : null; })()}
         <Row label={cfg.areaLabel}    value={state.area_km2.toLocaleString() + " km²"} />
         {(() => {
           const e = d && econOf(state, x, d);
