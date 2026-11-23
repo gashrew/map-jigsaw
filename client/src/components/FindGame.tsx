@@ -21,6 +21,7 @@ const MIN_ACC_FOR_BONUS = 0.7;
 export interface FindRound { key: string; label: string; ids: string[] }
 export interface FindState {
   level: FindLevel; round: FindRound;
+  named: boolean; // say what a wrong tap landed on (learning) or not (straight quiz)
   queue: string[]; idx: number; tries: number;
   found: Set<string>;
   results: Record<string, { tries: number; revealed: boolean }>;
@@ -63,12 +64,12 @@ export function finalScore(g: FindState) {
   return { n, secs, firstTry, acc, base, bonus, total, stars, par: PAR[g.level] * n };
 }
 
-const bestKey = (map: string, level: FindLevel, round: string) => `find:${map}:${level}:${round}`;
-export function readBest(map: string, level: FindLevel, round: string): { total: number; secs: number; acc: number } | null {
-  try { const s = localStorage.getItem(bestKey(map, level, round)); return s ? JSON.parse(s) : null; } catch { return null; }
+const bestKey = (map: string, level: FindLevel, round: string, named: boolean) => `find:${map}:${level}:${round}${named ? ":named" : ""}`;
+export function readBest(map: string, level: FindLevel, round: string, named: boolean): { total: number; secs: number; acc: number } | null {
+  try { const s = localStorage.getItem(bestKey(map, level, round, named)); return s ? JSON.parse(s) : null; } catch { return null; }
 }
-function writeBest(map: string, level: FindLevel, round: string, v: { total: number; secs: number; acc: number }) {
-  try { localStorage.setItem(bestKey(map, level, round), JSON.stringify(v)); } catch { /* ignore */ }
+function writeBest(map: string, level: FindLevel, round: string, named: boolean, v: { total: number; secs: number; acc: number }) {
+  try { localStorage.setItem(bestKey(map, level, round, named), JSON.stringify(v)); } catch { /* ignore */ }
 }
 
 export const fmtTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
@@ -95,10 +96,10 @@ export function useFindGame(pieces: MapPiece[], mapKey: string, noun: string) {
   }, [game?.start, game?.end]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => clearTimers, []);
 
-  function start(level: FindLevel, round: FindRound) {
+  function start(level: FindLevel, round: FindRound, named: boolean) {
     clearTimers(); busy.current = false; setMark(null); setNewBest(false);
     const queue = shuffle(round.ids).slice(0, round.key === "r10" ? 10 : round.key === "r20" ? 20 : undefined);
-    setGame({ level, round, queue, idx: 0, tries: 0, found: new Set(), results: {}, wrong: 0, points: 0, start: Date.now(), end: null });
+    setGame({ level, round, named, queue, idx: 0, tries: 0, found: new Set(), results: {}, wrong: 0, points: 0, start: Date.now(), end: null });
   }
 
   function advance() {
@@ -107,8 +108,8 @@ export function useFindGame(pieces: MapPiece[], mapKey: string, noun: string) {
     if (g.idx + 1 >= g.queue.length) {
       const done = { ...g, end: Date.now() };
       setGame(done);
-      const s = finalScore(done), prev = readBest(mapKey, g.level, g.round.key);
-      if (!prev || s.total > prev.total) { writeBest(mapKey, g.level, g.round.key, { total: s.total, secs: s.secs, acc: s.acc }); setNewBest(true); }
+      const s = finalScore(done), prev = readBest(mapKey, g.level, g.round.key, g.named);
+      if (!prev || s.total > prev.total) { writeBest(mapKey, g.level, g.round.key, g.named, { total: s.total, secs: s.secs, acc: s.acc }); setNewBest(true); }
       return;
     }
     setGame({ ...g, idx: g.idx + 1, tries: 0 });
@@ -132,7 +133,7 @@ export function useFindGame(pieces: MapPiece[], mapKey: string, noun: string) {
       return;
     }
     const tries = g.tries + 1;
-    const where = hit ? (g.found.has(hit) ? `That's ${nameOf(hit)}, already found` : `That's ${nameOf(hit)}`) : `That's not on any ${noun}`;
+    const where = !g.named ? "Not there" : hit ? (g.found.has(hit) ? `That's ${nameOf(hit)}, already found` : `That's ${nameOf(hit)}`) : `That's not on any ${noun}`;
     if (tries >= MAX_TRIES) {
       busy.current = true;
       place(g, target, true, { tries, wrong: g.wrong + 1, points: g.points - WRONG });
@@ -140,7 +141,7 @@ export function useFindGame(pieces: MapPiece[], mapKey: string, noun: string) {
       later(1900, advance);
     } else {
       setGame({ ...g, tries, wrong: g.wrong + 1, points: g.points - WRONG });
-      setMark({ id: hit, kind: "wrong", text: `✗ ${where}  −${WRONG}  (${MAX_TRIES - tries} ${MAX_TRIES - tries === 1 ? "try" : "tries"} left)`, n: Date.now() });
+      setMark({ id: g.named ? hit : null, kind: "wrong", text: `✗ ${where}  −${WRONG}  (${MAX_TRIES - tries} ${MAX_TRIES - tries === 1 ? "try" : "tries"} left)`, n: Date.now() });
     }
   }
 
@@ -168,13 +169,14 @@ export function useFindGame(pieces: MapPiece[], mapKey: string, noun: string) {
 }
 
 // ─── Setup ────────────────────────────────────────────────────────────────────
-export function FindSetup({ cfg, onStart, onClose }: { cfg: MapConfig; onStart: (l: FindLevel, r: FindRound) => void; onClose: () => void }) {
+export function FindSetup({ cfg, onStart, onClose }: { cfg: MapConfig; onStart: (l: FindLevel, r: FindRound, named: boolean) => void; onClose: () => void }) {
   const rounds = roundsFor(cfg.pieces);
   const [level, setLevel] = useState<FindLevel>(() => { try { return (localStorage.getItem("findLevel") as FindLevel) || "easy"; } catch { return "easy"; } });
   const [roundKey, setRoundKey] = useState(rounds.length > 1 && cfg.pieces.length > 25 ? "r10" : "all");
   const round = rounds.find(r => r.key === roundKey) ?? rounds[0];
-  const best = readBest(cfg.key, level, round.key);
-  const go = () => { try { localStorage.setItem("findLevel", level); } catch { /* ignore */ } onStart(level, round); };
+  const [named, setNamed] = useState(() => { try { return localStorage.getItem("findNamed") === "1"; } catch { return false; } });
+  const best = readBest(cfg.key, level, round.key, named);
+  const go = () => { try { localStorage.setItem("findLevel", level); localStorage.setItem("findNamed", named ? "1" : "0"); } catch { /* ignore */ } onStart(level, round, named); };
   return (
     <Modal onClose={onClose} label="Find it quiz">
       <h2 style={h2}>Find it</h2>
@@ -188,6 +190,15 @@ export function FindSetup({ cfg, onStart, onClose }: { cfg: MapConfig; onStart: 
           <button key={l.id} onClick={() => setLevel(l.id)} style={choice(level === l.id)}>
             <div style={{ fontWeight: 600, fontSize: "0.85rem" }}>{l.label}</div>
             <div style={{ fontSize: "0.65rem", color: level === l.id ? "#c8b56a" : MUTED, marginTop: 2 }}>{l.note}</div>
+          </button>
+        ))}
+      </div>
+      <div style={lab}>When you tap the wrong place</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 6, marginBottom: 14 }}>
+        {([[false, "Just say it's wrong", "A straight quiz"], [true, "Say what you tapped", `Shows the ${cfg.noun} you tapped, to help you learn`]] as const).map(([v, t, note]) => (
+          <button key={t} onClick={() => setNamed(v)} style={choice(named === v)}>
+            <div style={{ fontWeight: 600, fontSize: "0.85rem" }}>{t}</div>
+            <div style={{ fontSize: "0.65rem", color: named === v ? "#c8b56a" : MUTED, marginTop: 2 }}>{note}</div>
           </button>
         ))}
       </div>
@@ -213,15 +224,15 @@ export function FindHud({ game, name, mark, onReveal, onExit }: { game: FindStat
   const secs = Math.round(((game.end ?? Date.now()) - game.start) / 1000);
   const markColour = mark?.kind === "right" ? "#6ddc6d" : mark?.kind === "wrong" ? "#ff8a80" : "#ffb74d";
   return (
-    <div data-ui style={{ position: "absolute", top: 10, left: "50%", transform: "translateX(-50%)", zIndex: 700, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, maxWidth: "calc(100% - 20px)" }}>
-      <div style={{
+    <div data-ui style={{ position: "absolute", top: 10, left: 10, right: 10, zIndex: 700, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, pointerEvents: "none" }}>
+      <div style={{ pointerEvents: "auto", maxWidth: "min(640px, 100%)",
         display: "flex", alignItems: "center", gap: 14, padding: "8px 14px", borderRadius: 10,
         background: "rgba(16,27,50,0.95)", border: "1px solid rgba(224,201,127,0.45)", boxShadow: "0 4px 18px rgba(0,0,0,0.6)",
         fontFamily: "Inter, sans-serif",
       }}>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: "1 1 auto" }}>
           <div style={{ fontSize: "0.6rem", color: MUTED, textTransform: "uppercase", letterSpacing: "0.1em" }}>Find {game.idx + 1} of {game.queue.length}</div>
-          <div data-find-target style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "1.3rem", color: GOLD, fontWeight: 700, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{game.end ? "Finished" : name}</div>
+          <div data-find-target style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: name.length > 26 ? "1rem" : name.length > 16 ? "1.12rem" : "1.3rem", color: GOLD, fontWeight: 700, lineHeight: 1.2, overflowWrap: "anywhere" }}>{game.end ? "Finished" : name}</div>
           {game.tries > 0 && !game.end && <div style={{ fontSize: "0.65rem", color: "#ff8a80" }}>{MAX_TRIES - game.tries} {MAX_TRIES - game.tries === 1 ? "try" : "tries"} left</div>}
         </div>
         <div style={{ textAlign: "right", fontSize: "0.75rem", color: MUTED, lineHeight: 1.5, whiteSpace: "nowrap" }}>
@@ -236,7 +247,7 @@ export function FindHud({ game, name, mark, onReveal, onExit }: { game: FindStat
       {mark && (
         <div key={mark.n} style={{
           padding: "4px 14px", borderRadius: 20, background: "rgba(16,27,50,0.95)", border: `1px solid ${markColour}`,
-          color: markColour, fontSize: "0.8rem", fontFamily: "Inter, sans-serif", whiteSpace: "nowrap", pointerEvents: "none",
+          color: markColour, fontSize: "0.8rem", fontFamily: "Inter, sans-serif", textAlign: "center", maxWidth: "100%", pointerEvents: "none",
           animation: "panelIn 0.18s ease-out",
         }}>{mark.text}</div>
       )}
@@ -249,13 +260,13 @@ export function FindResults({ game, nameOf, newBest, mapKey, onAgain, onClose }:
   game: FindState; nameOf: (id: string) => string; newBest: boolean; mapKey: string; onAgain: () => void; onClose: () => void;
 }) {
   const s = finalScore(game);
-  const best = readBest(mapKey, game.level, game.round.key);
+  const best = readBest(mapKey, game.level, game.round.key, game.named);
   const missed = game.queue.filter(id => game.results[id] && (game.results[id].tries > 0 || game.results[id].revealed));
   const level = LEVELS.find(l => l.id === game.level)?.label;
   return (
     <Modal onClose={onClose} label="Quiz results">
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: "0.7rem", color: MUTED, textTransform: "uppercase", letterSpacing: "0.1em" }}>{level} · {game.round.label}</div>
+        <div style={{ fontSize: "0.7rem", color: MUTED, textTransform: "uppercase", letterSpacing: "0.1em" }}>{level} · {game.round.label}{game.named ? " · wrong taps named" : ""}</div>
         <div style={{ fontSize: "1.9rem", color: GOLD, letterSpacing: "0.1em", margin: "4px 0" }} aria-label={`${s.stars} stars`}>
           {"★".repeat(s.stars)}<span style={{ color: "#2a3a55" }}>{"★".repeat(5 - s.stars)}</span>
         </div>

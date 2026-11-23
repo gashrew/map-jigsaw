@@ -717,7 +717,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
     return () => clearTimeout(t);
   }, [deckOn, portrait]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  function startFind(level: FindLevel, round: FindRound) {
+  function startFind(level: FindLevel, round: FindRound, named: boolean) {
     setFindSetup(false);
     if (!findOn) findLabelsBefore.current = showLabels;
     setShowLabels(false);
@@ -726,7 +726,7 @@ export default function JigsawMap({ cfg }: { cfg: MapConfig }) {
     states.forEach(p => { pieceStates.current[p.id] = { tx: 0, ty: 0 }; });
     setTrays(null);
     resetView();
-    find.start(level, round);
+    find.start(level, round, named);
   }
   function exitFind() {
     find.stop();
